@@ -1,0 +1,40 @@
+[data-title="Diagrams - flowchart"] div.mermaid,
+[data-title="Diagrams - sequence"] div.mermaid,
+[data-title="Diagrams - class"] div.mermaid,
+[data-title="Diagrams - state"] div.mermaid,
+[data-title="Diagrams - ERD"] div.mermaid {
+    float: left;
+    width: 45%;
+    margin-right: 5%;
+}
+
+/* Journey charts render with all available height, needs to be cut. */
+[data-title="Diagrams - journey"] div.mermaid {
+    max-height: 320px;
+    overflow: hidden;
+}
+
+/* Scaling DIV with pie chart does not work well, better scale SVG inside. */
+[data-title="Diagrams - pie chart"] div.mermaid svg {
+    width: 80%;
+}
+
+/* For two or more columns use outer list as flex container. */
+[data-title="Styling - two columns list"] p + ul {
+    display: flex;
+    justify-content: space-between;
+}
+
+[data-title="Styling - two columns list"] p + ul > li {
+    width: 45%;
+}
+
+[data-title="Styling - image styling"] img[alt="Fox"] {
+    width: 25%;
+    margin: auto;
+    display: block;
+}
+
+[data-title="Styling - image styling"] p:has(img) + p {
+    text-align: center;
+}
