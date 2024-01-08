@@ -10,11 +10,11 @@ Michał Wójcik
 
 Why don't want to use WYSIWYG:
 
-* as developer most time I'm dealing with editing sorce codes and moving between them,
-* as far as I love point and click games, this approach at works is not ergonomic for me,
+* developer most time are dealing with editing sorce codes and navigating between them,
+* as far as point and click games are loved, this approach at work is not ergonomic,
 * batch updating is at least painful,
-* moving/copying content between topics or courses troublesome,
-* sharing content in other form than slides is impossible without maintaining separate files with same content.
+* moving/copying content between topics or courses is troublesome,
+* sharing content in other forms than slides is impossible without maintaining separate files with the same content.
 
 ---
 
@@ -22,11 +22,11 @@ Why don't want to use WYSIWYG:
 
 Why use markdown:
 
-* creating academic slides, fancy animations are not required, this is not advertisement,
+* when creating academic slides, fancy animations are not required, this is not advertisement,
 * it's simple text format,
 * way simpler than LaTeX (bullet list for example),
 * slides content can be separated from slides styling and published independently,
-* developer platforms (like GitLab) supports its and renders nice HTML.
+* developer platforms (like GitLab) support it and render nice HTML.
 
 ---
 
@@ -37,6 +37,7 @@ What's the flow:
 * select best suited JavaScript presentation engine,
 * create HTML+CSS+JS project,
 * create HTML+CSS templates,
+* fix the engine as it does not meet particular whim,
 * implement slides serving logic,
 * configure simple HTTP server,
 * create HTML to PDF converting script,
@@ -44,7 +45,7 @@ What's the flow:
     * start HTTP server,
     * display preview in browser,
     * add markdown file for course or topic,
-    * add CSS styles if needs some additional styling,
+    * add CSS styles if some additional styling is needed,
     * generate PDF.
 
 ---
