@@ -30,6 +30,7 @@ function generate_pdf() {
 
     echo "${courses}" | grep "${list_item_pattern}" | while IFS= read -r course; do
         course_url="${base_url}/${slides_resource}/$(echo "${course}" | sed -n "${url_pattern}")"
+        course_url="${course_url// /%20}"
         course_name="$(echo "${course}" | sed -n "${name_pattern}")"
         course_dir="${output_dir}/${course_name}"
 
@@ -39,6 +40,7 @@ function generate_pdf() {
 
         echo "${topics}" | grep "${list_item_pattern}" | while IFS= read -r topic; do
             topic_url="${base_url}/${slides_resource}/${course_name}/$(echo "${topic}" | sed -n "${url_pattern}")"
+            topic_url="${topic_url// /%20}"
             topic_name="$(echo "${topic}" | sed -n "${name_pattern}")"
             topic_file="${course_dir}/${topic_name}.${slides_extension}"
 
