@@ -64,8 +64,8 @@ The Lato font is licenses under [Open Font License](src/fonts/Lato/OFL.txt).
 
 The Ubuntu Mono font is licenses under [Ubuntu Font License](src/fonts/Ubuntu_Mono/UFL.txt).
 
-The `src/img/pg_logo_horizontal_color.svg` and `src/img/pg_logo_white.svg` files are property of Gdańsk University of
-Technology and are not shared under the project license.
+The [PG logo horizontal color](src/img/pg_logo_horizontal_color.svg) and [PG logo white](src/img/pg_logo_white.svg)
+files are property of Gdańsk University of Technology and are not shared under the project license.
 
 ## Author
 
