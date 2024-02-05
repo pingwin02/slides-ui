@@ -45,12 +45,12 @@ function generate_pdf() {
             topic_file="${course_dir}/${topic_name}.${slides_extension}"
 
             docker run --rm -t \
-                       -u "$(id -u):$(id -g)" \
-                       -v "$(pwd):${slides_root_dir}" \
-                       astefanutti/decktape \
-                       "${slides_engine}" \
-                       "${topic_url}" \
-                       "${topic_file}"
+                -u "$(id -u):$(id -g)" \
+                -v "$(pwd):${slides_root_dir}" \
+                astefanutti/decktape \
+                "${slides_engine}" \
+                "${topic_url}" \
+                "${topic_file}"
         done
 
     done
