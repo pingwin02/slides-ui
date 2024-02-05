@@ -1,6 +1,12 @@
+let process = require('node:process');
 let http = require('http');
 let fs = require('fs');
 let path = require('path');
+
+process.on('SIGINT', () => {
+    console.info("Interrupted")
+    process.exit(0)
+});
 
 const portIndex = process.argv.indexOf('--port');
 const srcDirIndex = process.argv.indexOf('--src');
@@ -78,3 +84,4 @@ http.createServer(function (request, response) {
 }).listen(port, '0.0.0.0');
 
 console.log(`Server running at http://127.0.0.1:${port}/`);
+console.log('To stop use: CTRL+C');
