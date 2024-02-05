@@ -29,4 +29,4 @@ VOLUME /opt/slides-ui/public_html/css/slides
 
 EXPOSE 8080
 
-ENTRYPOINT ["node", "/opt/slides-ui/server.js", "--port", "8080", "--src", "/opt/slides-ui/public_html"]
+CMD ["/opt/slides-ui/server.js", "--port", "8080", "--src", "/opt/slides-ui/public_html"]
