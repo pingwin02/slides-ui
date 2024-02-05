@@ -7,10 +7,18 @@ of Electronics, Telecommunications and Informatics of Gdańsk University of Tech
 
 ## Requirements
 
-The list of tools required to build and run the project:
+The list of tools required to run the project without using containerization:
 
 * npm 8
 * Node 16
+
+The list of tools required to run the project using containerization:
+
+* Docker 24
+
+The list of tools required for PDF printing:
+
+* Docker 24
 
 ## Building
 
@@ -22,7 +30,7 @@ In order to build Docker image use provided script:
 
 ## Running
 
-In order to run use:
+In order to run without using containerization use:
 
 ```bash
 npm run serve
@@ -34,14 +42,22 @@ or:
 node server.js --port 8080 --src ./src
 ```
 
-In order to run using Docker use:
+In order to run using containerization use:
 
 ```bash
-docker run --name "slides-ui" --rm -it --init -p "8080:8080" \
+docker run --name "slides-ui" --rm -it -p "8080:8080" \
            -v "$(pwd)/src/slides:/opt/slides-ui/public_html/slides" \
            -v "$(pwd)/src/css/slides:/opt/slides-ui/public_html/css/slides" \
            "kask.eti.pg.edu.pl/slides-ui:0.0.1-SNAPSHOT"
 ```
+
+or:
+
+```bash
+./run.sh
+```
+
+To stop server, use `CTRL` + `C`.
 
 Please be aware that if `src/slides` contains symbolic links (e.g. to store slides in different repository) those will
 not work inside docker container. They must be mounted separately.
@@ -58,7 +74,7 @@ For PDF printing use provided script:
 
 Project is licensed under the [MIT](LICENSE) license.
 
-The jQuery, Mermaid and remark libraries shipped with this project ale licenses under the [MIT](LICENSE) license.
+The jQuery, Mermaid and remark libraries shipped with this project ale licensed under the [MIT](LICENSE) license.
 
 The Lato font is licenses under [Open Font License](src/fonts/Lato/OFL.txt).
 
