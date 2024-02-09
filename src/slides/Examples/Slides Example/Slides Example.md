@@ -42,11 +42,11 @@ What's the flow:
 * configure simple HTTP server,
 * create HTML to PDF converting script,
 * create slides:
-    * start HTTP server,
-    * display preview in browser,
-    * add markdown file for course or topic,
-    * add CSS styles if some additional styling is needed,
-    * generate PDF.
+  * start HTTP server,
+  * display preview in browser,
+  * add markdown file for course or topic,
+  * add CSS styles if some additional styling is needed,
+  * generate PDF.
 
 ---
 
@@ -459,21 +459,21 @@ Two (or more) columns lists are often used for comparison.
 Example pets:
 
 * Wolves:
-    * gray,
-    * can be deadly.
+  * gray,
+  * can be deadly.
 * Foxes:
-    * red,
-    * can be harmless.
+  * red,
+  * can be harmless.
 
 ```markdown
 Example pets:
 
 * Wolves:
-    * gray,
-    * can be deadly.
+  * gray,
+  * can be deadly.
 * Foxes:
-    * red,
-    * can be harmless.
+  * red,
+  * can be harmless.
 ```
 
 ```css
