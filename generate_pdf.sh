@@ -14,7 +14,7 @@ function generate_pdf() {
     base_url="$1"
     output_dir="$2"
     
-    url_pattern="s/.*(\([^)]*\))/\1/p" # Used to extract URL to course or topic from markdown list.
+    url_pattern="s/.*(<\([^)]*\)>)/\1/p" # Used to extract URL to course or topic from markdown list.
     name_pattern="s/^\* \[\([^]]*\)\](.*)/\1/p" # Used to extract name of the course or topic from markdown list.
     list_item_pattern="^\*" # Used to markdown enumeration entries from text.
     markdown_accept_header="Accept: text/markdown" # Accept header for fetching slides in markdown format.
