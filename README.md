@@ -54,7 +54,7 @@ docker run --name "slides-ui" --rm -it -p "8080:8080" \
 or:
 
 ```bash
-./run.sh
+bash run.sh
 ```
 
 To stop server, use `CTRL` + `C`.
@@ -67,7 +67,32 @@ not work inside docker container. They must be mounted separately.
 For PDF printing use provided script:
 
 ```bash
-./generate_pdf.sh
+bash generate_pdf.sh
+```
+
+In order to print slides only for selected course use:
+
+```bash
+bash generate_pdf.sh [course_name]
+```
+
+Value for `course_name` should be the same as label in `Materials.md` list. For example:
+
+```bash
+bash generate_pdf.sh "Examples"
+```
+
+In order to print slides only for selected topic use:
+
+```bash
+bash generate_pdf.sh [course_name [topic_name]]
+```
+
+Value for `course_name` should be the same as label in `Materials.md` list. Value for `topic_name` should be the same
+as label in course list. For example:
+
+```bash
+bash generate_pdf.sh "Examples" "Slides Example"
 ```
 
 ## License
