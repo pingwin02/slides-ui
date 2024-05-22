@@ -32,7 +32,9 @@ $.when(slidesRequest, templateRequest).done(function (slide, template) {
     $('#source').text(md);
 
     // Create slideshow.
-    slideshow = remark.create({}, event => {
+    slideshow = remark.create({
+        ratio: "16:9"
+    }, event => {
         // Add each slide title (h3 header) as data-title attribute, so it can be used in CSS selectors.
         $('.remark-slide-container').each(function () {
             $(this).attr('data-title', $(this).find('h3').text());

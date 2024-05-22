@@ -58,7 +58,6 @@ function generate_pdf() {
                         -u "$(id -u):$(id -g)" \
                         -v "$(pwd):${slides_root_dir}" \
                         astefanutti/decktape \
-                        "${slides_engine}" \
                         "${topic_url}" \
                         "${topic_file}"
                 fi
