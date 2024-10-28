@@ -3,34 +3,38 @@
 Web application for serving presentation slides prepared in Markdown format. Used for lectures conducted at the Faculty
 of Electronics, Telecommunications and Informatics of Gdańsk University of Technology.
 
+Forked from [Slides UI](https://git.pg.edu.pl/p650304/slides-ui) by Michał Wójcik.
+
 [![MIT licensed][shield-mit]](LICENSE)
 
 ## Requirements
 
 The list of tools required to run the project without using containerization:
 
-* npm 8
-* Node 16
-
-The list of tools required to run the project using containerization:
-
-* Docker 24
+* npm
+* Node
 
 The list of tools required for PDF printing:
 
-* Docker 24
-
-## Building
-
-In order to build Docker image use provided script:
-
-```bash
-./build.sh
-```
+* Docker
 
 ## Running
 
-In order to run without using containerization use:
+Before starting server run:
+    
+```bash
+npm run init
+```
+
+or 
+
+```bash
+./create.sh [course_name] && ./scan.sh
+```
+
+to generate initial markdown files.
+
+In order to start a server use:
 
 ```bash
 npm run serve
@@ -42,57 +46,26 @@ or:
 node server.js --port 8080 --src ./src
 ```
 
-In order to run using containerization use:
-
-```bash
-docker run --name "slides-ui" --rm -it -p "8080:8080" \
-           -v "$(pwd)/src/slides:/opt/slides-ui/public_html/slides" \
-           -v "$(pwd)/src/css/slides:/opt/slides-ui/public_html/css/slides" \
-           "kask.eti.pg.edu.pl/slides-ui:0.0.1-SNAPSHOT"
-```
-
-or:
-
-```bash
-bash run.sh
-```
-
 To stop server, use `CTRL` + `C`.
-
-Please be aware that if `src/slides` contains symbolic links (e.g. to store slides in different repository) those will
-not work inside docker container. They must be mounted separately.
 
 ## PDF printing
 
 For PDF printing use provided script:
 
 ```bash
-bash generate_pdf.sh
+./generate_pdf.sh
 ```
 
 In order to print slides only for selected course use:
 
 ```bash
-bash generate_pdf.sh [course_name]
+./generate_pdf.sh [course_name]
 ```
 
 Value for `course_name` should be the same as label in `Materials.md` list. For example:
 
 ```bash
-bash generate_pdf.sh "Examples"
-```
-
-In order to print slides only for selected topic use:
-
-```bash
-bash generate_pdf.sh [course_name [topic_name]]
-```
-
-Value for `course_name` should be the same as label in `Materials.md` list. Value for `topic_name` should be the same
-as label in course list. For example:
-
-```bash
-bash generate_pdf.sh "Examples" "Slides Example"
+./generate_pdf.sh "My course"
 ```
 
 ## License

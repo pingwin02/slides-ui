@@ -16,3 +16,9 @@ dist/
 
 ### Angular ###
 .angular/
+
+src/slides/*
+src/css/slides/*
+
+!src/slides/Tutorial
+!src/css/slides/Tutorial/

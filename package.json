@@ -13,6 +13,7 @@
     },
     "license": "MIT",
     "scripts": {
-        "serve": "node server.js --port 8080 --src ./src"
+        "init": "bash create.sh \"My course\" && bash scan.sh",
+        "serve": "node server.js"
     }
 }

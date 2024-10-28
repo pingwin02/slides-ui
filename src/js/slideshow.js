@@ -15,6 +15,8 @@ let slidesRequest = $.ajax({
     headers: {
         'Accept': 'text/markdown'
     }
+}).fail(function () {
+    alert("Slides not found. Please run 'npm run init' before 'npm run serve'.");
 });
 
 // Fetch slides template.
@@ -29,6 +31,8 @@ let templateRequest = $.ajax({
 $.when(slidesRequest, templateRequest).done(function (slide, template) {
     // Markdown source is made with template and appended slides source.
     let md = template[0] + slide[0];
+    md = md.replace(/\r\n/g, '\n');
+
     $('#source').text(md);
 
     // Create slideshow.
