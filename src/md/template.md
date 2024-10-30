@@ -1,4 +1,5 @@
 layout: true
+
 <div>
     <img class="logo--full" alt="PG Logo" src="/img/pg_logo_white.svg"/>
 </div>

@@ -1,26 +1,50 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8"/>
-        <meta name="description" content="UI interface for slides in Markdown format."/>
-        <meta name="keywords" content="slides, markdown"/>
-        <meta name="author" content="Michał (psysiu) Wójcik"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="description"
+      content="UI interface for slides in Markdown format."
+    />
+    <meta name="keywords" content="slides, markdown" />
+    <meta name="author" content="Michał (psysiu) Wójcik" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-        <link rel="stylesheet" type="text/css" href="/css/main.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
 
-        <script type="application/javascript" src="/js/remark-0.15.0.min.js"></script>
-        <script type="application/javascript" src="/js/jquery-3.6.4.min.js"></script>
-        <script type="application/javascript" src="/js/mermaid-9.4.3.min.js"></script>
-        <script type="application/javascript" src="/js/slideshow.js" defer="defer"></script>
+    <script
+      type="application/javascript"
+      src="/js/remark-0.15.0.min.js"
+    ></script>
+    <script
+      type="application/javascript"
+      src="/js/jquery-3.6.4.min.js"
+    ></script>
+    <script
+      type="application/javascript"
+      src="/js/mermaid-9.4.3.min.js"
+    ></script>
+    <script
+      type="application/javascript"
+      src="/js/slideshow.js"
+      defer="defer"
+    ></script>
 
-        <title>Slides UI</title>
+    <title>Slides UI</title>
 
-        <link rel="icon" type="image/svg+xml" href="/img/pg_logo_white.svg"/>
-    </head>
+    <link rel="icon" type="image/svg+xml" href="/img/pg_logo_white.svg" />
+    <script>
+      const ws = new WebSocket(`ws://${window.location.host}`);
+      ws.onmessage = (event) => {
+        if (event.data === "reload") {
+          window.location.reload();
+        }
+      };
+    </script>
+  </head>
 
-    <body>
-        <label for="source"></label>
-        <textarea id="source"></textarea>
-    </body>
+  <body>
+    <label for="source"></label>
+    <textarea id="source"></textarea>
+  </body>
 </html>

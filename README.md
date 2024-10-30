@@ -9,24 +9,32 @@ Forked from [Slides UI](https://git.pg.edu.pl/p650304/slides-ui) by Michał Wój
 
 ## Requirements
 
-The list of tools required to run the project without using containerization:
+The list of tools required to run the project:
 
-* npm
-* Node
+- npm
+- Node
+
+run:
+
+```bash
+npm install
+```
+
+to install all required dependencies.
 
 The list of tools required for PDF printing:
 
-* Docker
+- Docker
 
 ## Running
 
 Before starting server run:
-    
+
 ```bash
 npm run init
 ```
 
-or 
+or
 
 ```bash
 ./create.sh [course_name] && ./scan.sh
@@ -88,5 +96,4 @@ Copyright &copy; 2020 - 2024, Michał (psysiu) Wójcik
 [![][gravatar-psysiu]]()
 
 [shield-mit]: https://img.shields.io/badge/license-MIT-blue.svg
-
 [gravatar-psysiu]: https://s.gravatar.com/avatar/b61b36a5b97ca33e9d11d122c143b9f0

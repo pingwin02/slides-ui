@@ -10,11 +10,11 @@ Michał Wójcik
 
 Why don't want to use WYSIWYG:
 
-* developer most time are dealing with editing sorce codes and navigating between them,
-* as far as point and click games are loved, this approach at work is not ergonomic,
-* batch updating is at least painful,
-* moving/copying content between topics or courses is troublesome,
-* sharing content in other forms than slides is impossible without maintaining separate files with the same content.
+- developer most time are dealing with editing sorce codes and navigating between them,
+- as far as point and click games are loved, this approach at work is not ergonomic,
+- batch updating is at least painful,
+- moving/copying content between topics or courses is troublesome,
+- sharing content in other forms than slides is impossible without maintaining separate files with the same content.
 
 ---
 
@@ -22,11 +22,11 @@ Why don't want to use WYSIWYG:
 
 Why use markdown:
 
-* when creating academic slides, fancy animations are not required, this is not advertisement,
-* it's simple text format,
-* way simpler than LaTeX (bullet list for example),
-* slides content can be separated from slides styling and published independently,
-* developer platforms (like GitLab) support it and render nice HTML.
+- when creating academic slides, fancy animations are not required, this is not advertisement,
+- it's simple text format,
+- way simpler than LaTeX (bullet list for example),
+- slides content can be separated from slides styling and published independently,
+- developer platforms (like GitLab) support it and render nice HTML.
 
 ---
 
@@ -34,19 +34,19 @@ Why use markdown:
 
 What's the flow:
 
-* select best suited JavaScript presentation engine,
-* create HTML+CSS+JS project,
-* create HTML+CSS templates,
-* fix the engine as it does not meet particular whim,
-* implement slides serving logic,
-* configure simple HTTP server,
-* create HTML to PDF converting script,
-* create slides:
-  * start HTTP server,
-  * display preview in browser,
-  * add markdown file for course or topic,
-  * add CSS styles if some additional styling is needed,
-  * generate PDF.
+- select best suited JavaScript presentation engine,
+- create HTML+CSS+JS project,
+- create HTML+CSS templates,
+- fix the engine as it does not meet particular whim,
+- implement slides serving logic,
+- configure simple HTTP server,
+- create HTML to PDF converting script,
+- create slides:
+  - start HTTP server,
+  - display preview in browser,
+  - add markdown file for course or topic,
+  - add CSS styles if some additional styling is needed,
+  - generate PDF.
 
 ---
 
@@ -98,14 +98,14 @@ Subsequent slides can have any content.
 
 ### Just text
 
-The text may be **bold** or written in *italics* or ***both***.
+The text may be **bold** or written in _italics_ or **_both_**.
 
 It may also be in several paragraphs.
 
 ```markdown
 ### Just text
 
-The text may be **bold** or written in *italics* or ***both***.
+The text may be **bold** or written in _italics_ or **_both_**.
 
 It may also be in several paragraphs.
 ```
@@ -117,7 +117,7 @@ It may also be in several paragraphs.
 Tables are made simply.
 
 | Header          | Header        |
-|-----------------|---------------|
+| --------------- | ------------- |
 | entry           | entry         |
 | even more entry | another entry |
 
@@ -127,7 +127,7 @@ Tables are made simply.
 Tables are made simply.
 
 | Header          | Header        |
-|-----------------|---------------|
+| --------------- | ------------- |
 | entry           | entry         |
 | even more entry | another entry |
 ```
@@ -300,7 +300,7 @@ erDiagram
         uuid id PK
     }
     WOLF {
-        uuid id PK 
+        uuid id PK
         uuid pack FK
         varchar name
     }
@@ -314,7 +314,7 @@ erDiagram
         uuid id PK
     }
     WOLF {
-        uuid id PK 
+        uuid id PK
         uuid pack FK
         varchar name
     }
@@ -365,7 +365,7 @@ gantt
         Design UI         :d2, after d1, 4d
     section Development
         Frontend          :after d2, 8d
-        Backend           :after d2,8d 
+        Backend           :after d2,8d
 ```
 
 ````markdown
@@ -378,7 +378,7 @@ gantt
         Design UI         :d2, after d1, 4d
     section Development
         Frontend          :after d2, 8d
-        Backend           :after d2,8d 
+        Backend           :after d2,8d
 ```
 ````
 
@@ -444,9 +444,9 @@ Styling slides for PDF generation can be done with CSS.
 [data-title="Diagrams - class"] div.mermaid,
 [data-title="Diagrams - state"] div.mermaid,
 [data-title="Diagrams - ERD"] div.mermaid {
-    float: left;
-    width: 45%;
-    margin-right: 5%;
+  float: left;
+  width: 45%;
+  margin-right: 5%;
 }
 ```
 
@@ -458,32 +458,32 @@ Two (or more) columns lists are often used for comparison.
 
 Example pets:
 
-* Wolves:
-  * gray,
-  * can be deadly.
-* Foxes:
-  * red,
-  * can be harmless.
+- Wolves:
+  - gray,
+  - can be deadly.
+- Foxes:
+  - red,
+  - can be harmless.
 
 ```markdown
 Example pets:
 
-* Wolves:
-  * gray,
-  * can be deadly.
-* Foxes:
-  * red,
-  * can be harmless.
+- Wolves:
+  - gray,
+  - can be deadly.
+- Foxes:
+  - red,
+  - can be harmless.
 ```
 
 ```css
 [data-title="Styling - two columns list"] p + ul {
-    display: flex;
-    justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
 }
 
 [data-title="Styling - two columns list"] p + ul > li {
-    width: 45%;
+  width: 45%;
 }
 ```
 
@@ -553,14 +553,14 @@ bash generate_pdf.sh
 
 Helpful resources:
 
-* <https://www.markdownguide.org/>
-* <https://mermaid.js.org/intro/>
-* <https://remarkjs.com/>
+- <https://www.markdownguide.org/>
+- <https://mermaid.js.org/intro/>
+- <https://remarkjs.com/>
 
 ```markdown
 Helpful resources:
 
-* <https://www.markdownguide.org/>
-* <https://mermaid.js.org/intro/>
-* <https://remarkjs.com/>
+- <https://www.markdownguide.org/>
+- <https://mermaid.js.org/intro/>
+- <https://remarkjs.com/>
 ```

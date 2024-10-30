@@ -1,19 +1,23 @@
 {
-    "name": "@pl.edu.pg.eti.kask/slides-ui",
-    "version": "0.0.1-SNAPSTHOT",
-    "displayName": "Slides UI",
-    "description": "UI interface for slides in Markdown format.",
-    "keywords": [
-        "slides",
-        "markdown"
-    ],
-    "author": {
-        "name": "Michał (psysiu) Wójcik",
-        "email": "michal.wojcik@eti.pg.edu.pl"
-    },
-    "license": "MIT",
-    "scripts": {
-        "init": "bash create.sh \"My course\" && bash scan.sh",
-        "serve": "node server.js"
-    }
+  "name": "@pl.edu.pg.eti.kask/slides-ui",
+  "version": "0.0.1-SNAPSTHOT",
+  "displayName": "Slides UI",
+  "description": "UI interface for slides in Markdown format.",
+  "keywords": [
+    "slides",
+    "markdown"
+  ],
+  "author": {
+    "name": "Michał (psysiu) Wójcik",
+    "email": "michal.wojcik@eti.pg.edu.pl"
+  },
+  "license": "MIT",
+  "scripts": {
+    "init": "bash create.sh \"My course\" && bash scan.sh",
+    "serve": "node server.js"
+  },
+  "dependencies": {
+    "open": "^10.1.0",
+    "ws": "^8.18.0"
+  }
 }
