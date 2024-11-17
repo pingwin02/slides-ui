@@ -31,13 +31,13 @@ The list of tools required for PDF printing:
 Before starting server run:
 
 ```bash
-npm run init
+npm run init -- [course_name]
 ```
 
 or
 
 ```bash
-./create.sh [course_name] && ./scan.sh
+./create.sh [course_name]
 ```
 
 to generate initial markdown files.
@@ -51,7 +51,7 @@ npm run serve
 or:
 
 ```bash
-node server.js --port 8080 --src ./src
+bash scan.sh && node server.js --port 8080 --src ./src
 ```
 
 To stop server, use `CTRL` + `C`.

@@ -13,8 +13,8 @@
   },
   "license": "MIT",
   "scripts": {
-    "init": "bash create.sh \"My course\" && bash scan.sh",
-    "serve": "node server.js"
+    "init": "bash create.sh",
+    "serve": "bash scan.sh && node server.js"
   },
   "dependencies": {
     "open": "^10.1.0",

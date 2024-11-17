@@ -16,7 +16,7 @@ let slidesRequest = $.ajax({
         'Accept': 'text/markdown'
     }
 }).fail(function () {
-    alert("Slides not found. Please run 'npm run init' before 'npm run serve'.");
+    alert("Markdown file not found. Please check if the file exists and the path is correct.");
 });
 
 // Fetch slides template.
