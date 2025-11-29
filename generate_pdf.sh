@@ -41,11 +41,7 @@ function generate_pdf() {
         if [ -z "${selected_course_name}" ] || [ "${course_name}" = "${selected_course_name}" ]; then
             echo "Generating PDF for course: ${course_name}"
 
-            # Run Decktape to generate the PDF, with Windows-compatible path conversion
-            docker run --rm -t \
-                -u "$(id -u):$(id -g)" \
-                -v "/$(pwd | sed 's|^C:/|c/|;s|\\|/|g'):${slides_root_dir}" \
-                astefanutti/decktape \
+            npx decktape \
                 "${course_url}" \
                 "${course_file}"
         fi
@@ -57,8 +53,17 @@ function generate_pdf() {
 # Arguments:
 #   Optional course full name, the same as the label used in the list.
 #######################################
+
+BASE_URL="http://localhost:8080"
+
 function main() {
-    generate_pdf "http://host.docker.internal:8080" "dist" "$1"
+    curl -s --head "${BASE_URL}" | head -n 1 | grep "200 OK" > /dev/null
+    if [ $? -ne 0 ]; then
+        echo "Error: ${BASE_URL} is not running. Please start the server (npm run serve) before generating PDFs."
+        exit 1
+    fi
+
+    generate_pdf "${BASE_URL}" "dist" "$1"
 }
 
 main "$@"

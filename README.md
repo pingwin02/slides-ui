@@ -22,10 +22,6 @@ npm install
 
 to install all required dependencies.
 
-The list of tools required for PDF printing:
-
-- Docker
-
 ## Running
 
 Before starting server run:
@@ -58,33 +54,31 @@ To stop server, use `CTRL` + `C`.
 
 ## PDF printing
 
-For PDF printing use provided script:
+For PDF printing use:
 
 ```bash
 ./generate_pdf.sh
 ```
 
-In order to print slides only for selected course use:
+To print slides only for selected course use:
 
 ```bash
 ./generate_pdf.sh [course_name]
 ```
 
-Value for `course_name` should be the same as label in `Materials.md` list. For example:
+Value for `course_name` should be the same as label in `Materials.md` list.
 
-```bash
-./generate_pdf.sh "My course"
 ```
 
 ## License
 
 Project is licensed under the [MIT](LICENSE) license.
 
-The jQuery, Mermaid and remark libraries shipped with this project ale licensed under the [MIT](LICENSE) license.
+The jQuery, Mermaid and remark libraries shipped with this project are licensed under the [MIT](LICENSE) license.
 
-The Lato font is licenses under [Open Font License](src/fonts/Lato/OFL.txt).
+The Lato font is licensed under [Open Font License](src/fonts/Lato/OFL.txt).
 
-The Ubuntu Mono font is licenses under [Ubuntu Font License](src/fonts/Ubuntu_Mono/UFL.txt).
+The Ubuntu Mono font is licensed under [Ubuntu Font License](src/fonts/Ubuntu_Mono/UFL.txt).
 
 The [PG logo horizontal color](src/img/pg_logo_horizontal_color.svg) and [PG logo white](src/img/pg_logo_white.svg)
 files are property of Gdańsk University of Technology and are not shared under the project license.
@@ -97,3 +91,4 @@ Copyright &copy; 2020 - 2024, Michał (psysiu) Wójcik
 
 [shield-mit]: https://img.shields.io/badge/license-MIT-blue.svg
 [gravatar-psysiu]: https://s.gravatar.com/avatar/b61b36a5b97ca33e9d11d122c143b9f0
+```

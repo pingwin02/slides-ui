@@ -1,6 +1,6 @@
 {
   "name": "@pl.edu.pg.eti.kask/slides-ui",
-  "version": "0.0.1-SNAPSTHOT",
+  "version": "1.0.0",
   "displayName": "Slides UI",
   "description": "UI interface for slides in Markdown format.",
   "keywords": [
@@ -17,6 +17,7 @@
     "serve": "bash scan.sh && node server.js"
   },
   "dependencies": {
+    "decktape": "^3.15.0",
     "open": "^10.1.0",
     "ws": "^8.18.0"
   }

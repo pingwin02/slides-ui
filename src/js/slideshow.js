@@ -62,10 +62,12 @@ $.when(slidesRequest, templateRequest).done(function (slide, template) {
 function appendCustomSlides(path) {
     let customStyles = document.createElement('link');
     const base = path.split('/').slice(2, -1).join('/');
-    customStyles.href = `/css/slides/${base}/styles.css`;
-    customStyles.rel = 'stylesheet';
-    customStyles.type = 'text/css';
-    document.head.appendChild(customStyles);
+    if (base != '') {
+        customStyles.href = `/css/slides/${base}/styles.css`;
+        customStyles.rel = 'stylesheet';
+        customStyles.type = 'text/css';
+        document.head.appendChild(customStyles);
+    }
 }
 
 /**

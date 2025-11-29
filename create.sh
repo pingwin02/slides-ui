@@ -15,6 +15,8 @@ touch "src/css/slides/$ARG/styles.css"
 cat <<EOL > "src/slides/$ARG/$ARG.md"
 # $ARG
 
+---
+
 ## Use src/css/slides/$ARG/styles.css for custom styling
 EOL
 

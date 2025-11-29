@@ -445,7 +445,7 @@ Styling slides for PDF generation can be done with CSS.
 [data-title="Diagrams - state"] div.mermaid,
 [data-title="Diagrams - ERD"] div.mermaid {
   float: left;
-  width: 45%;
+  width: 35%;
   margin-right: 5%;
 }
 ```
@@ -505,7 +505,7 @@ The Fox.
 
 ```css
 [data-title="Styling - image styling"] img[alt="Fox"] {
-  width: 25%;
+  width: 20%;
   margin: auto;
   display: block;
 }
