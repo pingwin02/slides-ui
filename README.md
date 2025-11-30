@@ -68,8 +68,6 @@ To print slides only for selected course use:
 
 Value for `course_name` should be the same as label in `Materials.md` list.
 
-```
-
 ## License
 
 Project is licensed under the [MIT](LICENSE) license.
@@ -91,4 +89,3 @@ Copyright &copy; 2020 - 2024, Michał (psysiu) Wójcik
 
 [shield-mit]: https://img.shields.io/badge/license-MIT-blue.svg
 [gravatar-psysiu]: https://s.gravatar.com/avatar/b61b36a5b97ca33e9d11d122c143b9f0
-```
