@@ -30,24 +30,12 @@ Before starting server run:
 npm run init -- [course_name]
 ```
 
-or
-
-```bash
-./create.sh [course_name]
-```
-
 to generate initial markdown files.
 
 In order to start a server use:
 
 ```bash
 npm run serve
-```
-
-or:
-
-```bash
-bash scan.sh && node server.js --port 8080 --src ./src
 ```
 
 To stop server, use `CTRL` + `C`.
@@ -57,13 +45,13 @@ To stop server, use `CTRL` + `C`.
 For PDF printing use:
 
 ```bash
-./generate_pdf.sh
+npm run print
 ```
 
 To print slides only for selected course use:
 
 ```bash
-./generate_pdf.sh [course_name]
+npm run print -- [course_name]
 ```
 
 Value for `course_name` should be the same as label in `Materials.md` list.

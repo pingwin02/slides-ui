@@ -14,7 +14,8 @@
   "license": "MIT",
   "scripts": {
     "init": "bash create.sh",
-    "serve": "bash scan.sh && node server.js"
+    "serve": "bash scan.sh && node server.js",
+    "print": "bash generate_pdf.sh"
   },
   "dependencies": {
     "decktape": "^3.15.0",

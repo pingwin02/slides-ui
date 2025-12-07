@@ -2,6 +2,9 @@
 
 # Generates PDF files from presentations rendered in HTML by remark.js.
 
+# Trap SIGINT (Ctrl+C) and SIGTERM to stop the script immediately
+trap "exit 1" SIGINT SIGTERM
+
 #######################################
 # Generate PDF files from presentations rendered in HTML by remark.js. Firstly, it fetches slides from a base URL
 # containing a list of all courses. For each course, it generates a PDF file with slides.
@@ -44,6 +47,12 @@ function generate_pdf() {
             npx decktape \
                 "${course_url}" \
                 "${course_file}"
+            
+            # Check if decktape finished successfully or was interrupted
+            if [ $? -ne 0 ]; then
+                echo "Generation error or interrupted (Ctrl+C). Exiting script."
+                exit 1
+            fi
         fi
     done
 }
