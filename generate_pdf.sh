@@ -27,6 +27,16 @@ function generate_pdf() {
     materials_resource="Materials.md" # Name of the relative (to slides resource) resources with courses list.
     slides_extension="pdf" # Extension for output files with slides.
 
+    chrome_path="${CHROME_PATH}"
+    if [ -z "${chrome_path}" ]; then
+        chrome_path="$(command -v chromium-browser || command -v chromium || command -v google-chrome || command -v google-chrome-stable || command -v chrome)"
+    fi
+
+    if [ -z "${chrome_path}" ]; then
+        echo "Error: Chrome/Chromium executable not found. Set CHROME_PATH or install chromium-browser."
+        exit 1
+    fi
+
     # Ensure output directory exists
     mkdir -p "${output_dir}"
 
@@ -45,6 +55,7 @@ function generate_pdf() {
             echo "Generating PDF for course: ${course_name}"
 
             npx decktape \
+                --chrome-path "${chrome_path}" \
                 "${course_url}" \
                 "${course_file}"
             
@@ -63,7 +74,7 @@ function generate_pdf() {
 #   Optional course full name, the same as the label used in the list.
 #######################################
 
-BASE_URL="http://localhost:8080"
+BASE_URL="http://localhost:3000"
 
 function main() {
     curl -s --head "${BASE_URL}" | head -n 1 | grep "200 OK" > /dev/null

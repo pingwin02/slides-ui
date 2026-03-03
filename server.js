@@ -15,7 +15,7 @@ const portIndex = process.argv.indexOf("--port");
 const srcDirIndex = process.argv.indexOf("--src");
 
 // Default values for CMD arguments.
-let port = 8080;
+let port = 3000;
 let srcDir = "./src";
 
 // Check CMD arguments.
