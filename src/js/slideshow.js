@@ -30,7 +30,7 @@ let templateRequest = $.ajax({
 
 $.when(slidesRequest, templateRequest).done(function (slide, template) {
     // Markdown source is made with template and appended slides source.
-    let md = template[0] + slide[0];
+    let md = template[0] + slide[0] + '\n\n---\nlayout: false\nclass: end-slide\n\n<div class="end-slide-logo-wrapper">\n    <img class="end-slide-logo" alt="PG Logo" src="/img/pg_logo_white.svg"/>\n</div>\n';
     md = md.replace(/\r\n/g, '\n');
 
     $('#source').text(md);
@@ -43,6 +43,8 @@ $.when(slidesRequest, templateRequest).done(function (slide, template) {
         $('.remark-slide-container').each(function () {
             $(this).attr('data-title', $(this).find('h3').text());
         });
+
+        wrapSlideBody();
     });
 
     // Initialize mermaid diagram engine.
@@ -92,4 +94,63 @@ function renderMermaidDiagrams() {
             mermaid.init(undefined, diagrams[i]);
         }
     }
+}
+
+/**
+ * Wraps slide body content into dedicated container, excluding logo, headings and slide number.
+ */
+function wrapSlideBody() {
+    $('.remark-slide-content').each(function () {
+        const slideContent = $(this);
+
+        if (slideContent.children('.slide-body').length > 0 && slideContent.children('.slide-header').length > 0) {
+            return;
+        }
+
+        if (slideContent.children('.slide-header').length === 0) {
+            const header = $('<div class="slide-header"></div>');
+            const headerNodes = slideContent.children().filter(function () {
+                const node = $(this);
+
+                if (node.is('h1, h2, h3, .logo--horizontal, .logo--full')) {
+                    return true;
+                }
+
+                if (node.find('.logo--horizontal, .logo--full').length > 0) {
+                    return true;
+                }
+
+                return false;
+            });
+
+            if (headerNodes.length > 0) {
+                headerNodes.appendTo(header);
+                header.prependTo(slideContent);
+            }
+        }
+
+        if (slideContent.children('.slide-body').length > 0) {
+            return;
+        }
+
+        const body = $('<div class="slide-body"></div>');
+        const bodyNodes = slideContent.children().filter(function () {
+            const node = $(this);
+
+            if (node.is('.slide-header, .remark-slide-number, .slide-body')) {
+                return false;
+            }
+
+            return true;
+        });
+
+        if (bodyNodes.length === 0) {
+            return;
+        }
+
+        const bodyContent = $('<div class="slide-body-content"></div>');
+        bodyNodes.appendTo(bodyContent);
+        bodyContent.appendTo(body);
+        body.appendTo(slideContent);
+    });
 }

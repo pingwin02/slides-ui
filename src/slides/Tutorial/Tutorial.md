@@ -96,6 +96,24 @@ Subsequent slides can have any content.
 
 ---
 
+### Section divider slide
+
+Section divider can be created with `div.section`.
+
+```md
+<div class="section">
+    <h2>Section title</h2>
+</div>
+```
+
+---
+
+<div class="section">
+    <h2>Section title</h2>
+</div>
+
+---
+
 ### Just text
 
 The text may be **bold** or written in _italics_ or **_both_**.
