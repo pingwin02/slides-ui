@@ -26,16 +26,26 @@ function generate_pdf() {
     slides_resource="slides" # Name of the relative (to base URL) resource where slides in markdown format are available.
     materials_resource="Materials.md" # Name of the relative (to slides resource) resources with courses list.
     slides_extension="pdf" # Extension for output files with slides.
+    uname_s="$(uname -s)"
+    chrome_args=()
 
-    chrome_path="${CHROME_PATH}"
-    if [ -z "${chrome_path}" ]; then
-        chrome_path="$(command -v chromium-browser || command -v chromium || command -v google-chrome || command -v google-chrome-stable || command -v chrome)"
-    fi
+    case "${uname_s}" in
+        MINGW*|MSYS*|CYGWIN*)
+            ;;
+        *)
+            chrome_path="${CHROME_PATH}"
+            if [ -z "${chrome_path}" ]; then
+                chrome_path="$(command -v chromium-browser || command -v chromium || command -v google-chrome || command -v google-chrome-stable || command -v chrome)"
+            fi
 
-    if [ -z "${chrome_path}" ]; then
-        echo "Error: Chrome/Chromium executable not found. Set CHROME_PATH or install chromium-browser."
-        exit 1
-    fi
+            if [ -z "${chrome_path}" ]; then
+                echo "Error: Chrome/Chromium executable not found. Set CHROME_PATH or install chromium-browser."
+                exit 1
+            fi
+
+            chrome_args=(--chrome-path "${chrome_path}")
+            ;;
+    esac
 
     # Ensure output directory exists
     mkdir -p "${output_dir}"
@@ -55,7 +65,7 @@ function generate_pdf() {
             echo "Generating PDF for course: ${course_name}"
 
             npx decktape \
-                --chrome-path "${chrome_path}" \
+                "${chrome_args[@]}" \
                 "${course_url}" \
                 "${course_file}"
             
