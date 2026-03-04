@@ -36,6 +36,13 @@ const server = http
     // Requests are made relatively to source directory.
     let filePath = srcDir + url;
 
+    // If request points to slides directory, forward to default materials markdown file.
+    if (filePath === srcDir + "/slides" || filePath === srcDir + "/slides/") {
+      response.writeHead(301, { Location: "/" });
+      response.end();
+      return;
+    }
+
     // If requests is made to root, forward to index.html.
     if (filePath === srcDir + "/") {
       filePath += "index.html";
@@ -45,7 +52,7 @@ const server = http
     let extension = path.extname(filePath);
 
     // Get accept header from the request.
-    let accept = request.headers.accept;
+    let accept = request.headers.accept || "";
 
     let contentType;
 

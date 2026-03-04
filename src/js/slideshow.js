@@ -115,10 +115,6 @@ function normalizeSectionSlides() {
     $('.remark-slide-content').each(function () {
         const slideContent = $(this);
 
-        if (slideContent.find('.section').length > 0) {
-            return;
-        }
-
         const contentNodes = slideContent.children().filter(function () {
             const node = $(this);
 
@@ -134,17 +130,22 @@ function normalizeSectionSlides() {
         });
 
         if (contentNodes.length !== 1) {
+            slideContent.removeClass('section-slide');
             return;
         }
 
-        const sectionHeading = contentNodes.first();
-        if (!sectionHeading.is('h2')) {
-            return;
+        const onlyContentNode = contentNodes.first();
+
+        if (onlyContentNode.is('h2')) {
+            const section = $('<div class="section"></div>');
+            onlyContentNode.replaceWith(section);
+            onlyContentNode.appendTo(section);
         }
 
-        const section = $('<div class="section"></div>');
-        sectionHeading.replaceWith(section);
-        sectionHeading.appendTo(section);
+        const isSectionSlide = onlyContentNode.is('h2')
+            || (onlyContentNode.is('.section') && onlyContentNode.children('h2').length === 1);
+
+        slideContent.toggleClass('section-slide', isSectionSlide);
     });
 }
 
