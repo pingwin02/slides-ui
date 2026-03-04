@@ -122,26 +122,36 @@
 .logo--horizontal {
   display: block;
   width: 200px;
-  top: 0;
-  left: -60px;
-  position: relative;
-  float: left;
+  flex-shrink: 0;
+}
+
+.remark-slide-container:nth-of-type(n + 2) .slide-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.2rem;
+  margin-left: -80px;
+}
+
+.remark-slide-container:nth-of-type(n + 2) .slide-header .logo--horizontal {
+  margin-top: 0.1em;
 }
 
 .remark-slide-container:nth-of-type(n + 2) h3 {
   font-size: 28px;
   color: rgb(0, 55, 103);
-  position: relative;
   margin-top: 0;
-  left: -40px;
 }
 
 .remark-slide-container:nth-of-type(n + 2) h2 {
   font-size: 28px;
   color: rgb(0, 55, 103);
-  position: relative;
   margin-top: 0;
-  left: -40px;
+}
+
+.remark-slide-container:nth-of-type(n + 2) .slide-header h3,
+.remark-slide-container:nth-of-type(n + 2) .slide-header h2 {
+  flex: 1;
+  min-width: 0;
 }
 
 .remark-slide-container:nth-of-type(n + 2) .remark-slide-content {
