@@ -167,6 +167,10 @@
   padding: 1em 4em 1em 4em;
 }
 
+.remark-slide-container:nth-of-type(n + 2) .slide-body-content {
+  text-align: justify;
+}
+
 .section {
   display: flex;
   justify-content: center;
