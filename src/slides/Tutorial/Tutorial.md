@@ -98,19 +98,17 @@ Subsequent slides can have any content.
 
 ### Section divider slide
 
-Section divider can be created with `div.section`.
+Section divider can be created with markdown `##`.
 
 ```md
-<div class="section">
-    <h2>Section title</h2>
-</div>
+---
+## Section title
+---
 ```
 
 ---
 
-<div class="section">
-    <h2>Section title</h2>
-</div>
+## Section title
 
 ---
 
@@ -155,6 +153,8 @@ Tables are made simply.
 ### Images
 
 Images (also vectors) are embedded as links with `!`.
+
+Image caption is taken from `alt` text automatically.
 
 ![Fox](assets/img/fox.svg)
 
@@ -511,12 +511,12 @@ Example pets:
 
 Images can be styled using image `alt` selector.
 
-![Fox](assets/img/fox.svg)
+![](assets/img/fox.svg)
 
 The Fox.
 
 ```markdown
-![Fox](assets/img/fox.svg)
+![](assets/img/fox.svg)
 
 The Fox.
 ```
@@ -528,7 +528,7 @@ The Fox.
   display: block;
 }
 
-[data-title="Styling - image styling"] p:has(img) + p {
+[data-title="Styling - image styling"] figure.auto-image + p {
   text-align: center;
 }
 ```

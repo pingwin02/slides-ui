@@ -35,6 +35,6 @@
   display: block;
 }
 
-[data-title="Styling - image styling"] p:has(img) + p {
+[data-title="Styling - image styling"] figure.auto-image + p {
   text-align: center;
 }

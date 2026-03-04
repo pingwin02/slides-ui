@@ -160,6 +160,7 @@
   flex-direction: column;
   min-height: 100%;
   box-sizing: border-box;
+  overflow: hidden;
 }
 
 .remark-slide-container:nth-of-type(n + 2) .slide-body {
@@ -174,10 +175,13 @@
   flex-direction: column;
   justify-content: center;
   box-sizing: border-box;
-  padding: 1em 4em 1em 4em;
+  padding: 4em 4em 1em 4em;
+  overflow: hidden;
 }
 
 .remark-slide-container:nth-of-type(n + 2) .slide-body-content {
+  height: 100%;
+  box-sizing: border-box;
   text-align: justify;
 }
 
@@ -214,6 +218,51 @@
 
 figure {
   text-align: center;
+}
+
+.remark-slide-container:nth-of-type(n + 2)
+  .slide-body-content
+  figure.auto-image {
+  margin: 0.5em auto 0;
+  text-align: center;
+}
+
+.remark-slide-container:nth-of-type(n + 2) .slide-body-content .auto-image-row {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.remark-slide-container:nth-of-type(n + 2)
+  .slide-body-content
+  .auto-image-row
+  figure.auto-image {
+  flex: 1 1 0;
+  margin: 0.5em 0 0;
+}
+
+.remark-slide-container:nth-of-type(n + 2)
+  .slide-body-content
+  figure.auto-image
+  img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 92%;
+  max-height: 320px;
+  margin: 0 auto;
+  object-fit: contain;
+}
+
+.remark-slide-container:nth-of-type(n + 2)
+  .slide-body-content
+  figure.auto-image
+  figcaption {
+  margin-top: 0.35em;
+  font-size: 0.72em;
+  font-style: italic;
+  line-height: 1.2;
 }
 
 figcaption {

@@ -1,5 +1,10 @@
 let slideshow;
 
+const HEADER_NODE_SELECTOR = 'h1, h2, h3, .logo--horizontal, .logo--full';
+const BODY_EXCLUDED_SELECTOR = '.slide-header, .remark-slide-number, .slide-body';
+const AUTO_IMAGE_SELECTOR = 'figure.auto-image';
+const AUTO_IMAGE_ROW_SELECTOR = '.auto-image-row';
+
 let slides = window.location.pathname;
 
 if (slides === '/') {
@@ -44,7 +49,12 @@ $.when(slidesRequest, templateRequest).done(function (slide, template) {
             $(this).attr('data-title', $(this).find('h3').text());
         });
 
+        normalizeSectionSlides();
         wrapSlideBody();
+        ensureSlideStructureOrder();
+        normalizeMarkdownImages();
+        groupAutoImagesIntoRows();
+        fitAutoImagesToContent();
     });
 
     // Initialize mermaid diagram engine.
@@ -56,20 +66,24 @@ $.when(slidesRequest, templateRequest).done(function (slide, template) {
 
     renderMermaidDiagrams(); // Render mermaid diagram when displaying slide (e.g.: by direct link).
     slideshow.on('afterShowSlide', renderMermaidDiagrams); // Render mermaid diagram when navigating to next slide.
+    slideshow.on('afterShowSlide', fitAutoImagesToContent);
+    $(window).on('resize', fitAutoImagesToContent);
 });
 
 /**
  * Creates link element pointing to slides custom CSS and adds it to DOM.
  */
 function appendCustomSlides(path) {
-    let customStyles = document.createElement('link');
     const base = path.split('/').slice(2, -1).join('/');
-    if (base != '') {
-        customStyles.href = `/css/slides/${base}/styles.css`;
-        customStyles.rel = 'stylesheet';
-        customStyles.type = 'text/css';
-        document.head.appendChild(customStyles);
+    if (base === '') {
+        return;
     }
+
+    const customStyles = document.createElement('link');
+    customStyles.href = `/css/slides/${base}/styles.css`;
+    customStyles.rel = 'stylesheet';
+    customStyles.type = 'text/css';
+    document.head.appendChild(customStyles);
 }
 
 /**
@@ -77,23 +91,61 @@ function appendCustomSlides(path) {
  * mermaid class. Then for each div with mermaid class calls mermaid library init method to render diagram.
  */
 function renderMermaidDiagrams() {
-    let diagrams = document.querySelectorAll('pre > .mermaid');
-    for (let i = 0; i < diagrams.length; i++) {
+    document.querySelectorAll('pre > .mermaid').forEach(diagram => {
         let diagramText = '';
-        $(diagrams[i]).children('div').each(function () {
+        $(diagram).children('div').each(function () {
             diagramText += this.innerText + '\n'
         });
-        let mermaidDiagram = $('<div class="mermaid"></div>');
+        const mermaidDiagram = $('<div class="mermaid"></div>');
         mermaidDiagram.text(diagramText);
-        $(diagrams[i]).parent().replaceWith(mermaidDiagram);
-    }
+        $(diagram).parent().replaceWith(mermaidDiagram);
+    });
 
-    diagrams = document.querySelectorAll('.mermaid');
-    for (let i = 0; i < diagrams.length; i++) {
-        if (diagrams[i].offsetWidth > 0) {
-            mermaid.init(undefined, diagrams[i]);
+    document.querySelectorAll('.mermaid').forEach(diagram => {
+        if (diagram.offsetWidth > 0) {
+            mermaid.init(undefined, diagram);
         }
-    }
+    });
+}
+
+/**
+ * Converts a slide containing only markdown H2 content into a section divider slide.
+ */
+function normalizeSectionSlides() {
+    $('.remark-slide-content').each(function () {
+        const slideContent = $(this);
+
+        if (slideContent.find('.section').length > 0) {
+            return;
+        }
+
+        const contentNodes = slideContent.children().filter(function () {
+            const node = $(this);
+
+            if (node.is('.remark-slide-number')) {
+                return false;
+            }
+
+            if (node.is('.logo--horizontal, .logo--full') || node.find('.logo--horizontal, .logo--full').length > 0) {
+                return false;
+            }
+
+            return true;
+        });
+
+        if (contentNodes.length !== 1) {
+            return;
+        }
+
+        const sectionHeading = contentNodes.first();
+        if (!sectionHeading.is('h2')) {
+            return;
+        }
+
+        const section = $('<div class="section"></div>');
+        sectionHeading.replaceWith(section);
+        sectionHeading.appendTo(section);
+    });
 }
 
 /**
@@ -111,16 +163,7 @@ function wrapSlideBody() {
             const header = $('<div class="slide-header"></div>');
             const headerNodes = slideContent.children().filter(function () {
                 const node = $(this);
-
-                if (node.is('h1, h2, h3, .logo--horizontal, .logo--full')) {
-                    return true;
-                }
-
-                if (node.find('.logo--horizontal, .logo--full').length > 0) {
-                    return true;
-                }
-
-                return false;
+                return node.is(HEADER_NODE_SELECTOR) || node.find('.logo--horizontal, .logo--full').length > 0;
             });
 
             if (headerNodes.length > 0) {
@@ -135,13 +178,7 @@ function wrapSlideBody() {
 
         const body = $('<div class="slide-body"></div>');
         const bodyNodes = slideContent.children().filter(function () {
-            const node = $(this);
-
-            if (node.is('.slide-header, .remark-slide-number, .slide-body')) {
-                return false;
-            }
-
-            return true;
+            return !$(this).is(BODY_EXCLUDED_SELECTOR);
         });
 
         if (bodyNodes.length === 0) {
@@ -153,4 +190,153 @@ function wrapSlideBody() {
         bodyContent.appendTo(body);
         body.appendTo(slideContent);
     });
+}
+
+/**
+ * Ensures slide main blocks are ordered as: header, body, slide number.
+ */
+function ensureSlideStructureOrder() {
+    $('.remark-slide-content').each(function () {
+        const slideContent = $(this);
+        ['.slide-header', '.slide-body', '.remark-slide-number'].forEach(selector => {
+            const element = slideContent.children(selector);
+            if (element.length > 0) {
+                element.appendTo(slideContent);
+            }
+        });
+    });
+}
+
+/**
+ * Converts standalone markdown images into figure elements with optional figcaption generated from alt text.
+ */
+function normalizeMarkdownImages() {
+    $('.slide-body-content').each(function () {
+        $(this).children('p').each(function () {
+            const paragraph = $(this);
+            const image = paragraph.children('img:only-child');
+
+            if (image.length === 0) {
+                return;
+            }
+
+            if ($.trim(paragraph.text()).length > 0) {
+                return;
+            }
+
+            const figure = $('<figure class="auto-image"></figure>');
+            const caption = (image.attr('alt') || '').trim();
+
+            image.appendTo(figure);
+
+            if (caption.length > 0) {
+                $('<figcaption></figcaption>').text(caption).appendTo(figure);
+            }
+
+            paragraph.replaceWith(figure);
+        });
+    });
+}
+
+/**
+ * Groups consecutive auto image figures into horizontal rows.
+ */
+function groupAutoImagesIntoRows() {
+    $('.slide-body-content').each(function () {
+        const bodyContent = this;
+        const children = Array.from(bodyContent.children);
+        let index = 0;
+
+        while (index < children.length) {
+            if (!children[index].matches('figure.auto-image')) {
+                index += 1;
+                continue;
+            }
+
+            const run = [];
+            while (index < children.length && children[index].matches('figure.auto-image')) {
+                run.push(children[index]);
+                index += 1;
+            }
+
+            if (run.length <= 1) {
+                continue;
+            }
+
+            const row = document.createElement('div');
+            row.className = 'auto-image-row';
+            run[0].before(row);
+            run.forEach(figure => row.appendChild(figure));
+        }
+    });
+}
+
+/**
+ * Fits auto-generated markdown images to free vertical space in a slide body, so they don't overlap heading area
+ * and shrink when additional text is present.
+ */
+function fitAutoImagesToContent() {
+    $('.slide-body-content').each(function () {
+        const bodyContent = this;
+        const body = bodyContent.closest('.slide-body');
+        if (!body) {
+            return;
+        }
+
+        const figures = bodyContent.querySelectorAll(AUTO_IMAGE_SELECTOR);
+        if (figures.length === 0) {
+            return;
+        }
+
+        const safeContentHeight = Math.max(120, bodyContent.clientHeight || body.clientHeight);
+
+        const nonFigureHeight = Array.from(bodyContent.children)
+            .filter(node => !node.matches(`${AUTO_IMAGE_SELECTOR}, ${AUTO_IMAGE_ROW_SELECTOR}`))
+            .reduce((sum, node) => sum + getOuterHeightWithMargins(node), 0);
+
+        const standaloneFigures = Array.from(bodyContent.children).filter(node => node.matches(AUTO_IMAGE_SELECTOR));
+        const rows = Array.from(bodyContent.children).filter(node => node.matches(AUTO_IMAGE_ROW_SELECTOR));
+        const imageContainers = [...standaloneFigures, ...rows];
+        const containerCount = imageContainers.length;
+        if (containerCount === 0) {
+            return;
+        }
+
+        const availableForImages = Math.max(100, safeContentHeight - nonFigureHeight - 12);
+        const perContainerHeight = Math.max(100, Math.floor(availableForImages / containerCount));
+
+        standaloneFigures.forEach(figure => {
+            applyFigureImageMaxHeight(figure, perContainerHeight);
+        });
+
+        rows.forEach(row => row.querySelectorAll(AUTO_IMAGE_SELECTOR).forEach(figure => applyFigureImageMaxHeight(figure, perContainerHeight)));
+    });
+}
+
+function applyFigureImageMaxHeight(figure, containerHeight) {
+    const image = figure.querySelector('img');
+    if (!image) {
+        return;
+    }
+
+    const caption = figure.querySelector('figcaption');
+    const captionHeight = caption ? getOuterHeightWithMargins(caption) : 0;
+    const figureVerticalMargins = getVerticalMargins(figure);
+    const maxImageHeight = Math.max(90, containerHeight - captionHeight - figureVerticalMargins - 8);
+
+    image.style.maxHeight = `${maxImageHeight}px`;
+}
+
+function getOuterHeightWithMargins(element) {
+    const styles = window.getComputedStyle(element);
+    const marginTop = parseFloat(styles.marginTop) || 0;
+    const marginBottom = parseFloat(styles.marginBottom) || 0;
+    return element.getBoundingClientRect().height + marginTop + marginBottom;
+}
+
+function getVerticalMargins(element) {
+    const styles = window.getComputedStyle(element);
+    const marginTop = parseFloat(styles.marginTop) || 0;
+    const marginBottom = parseFloat(styles.marginBottom) || 0;
+    return marginTop + marginBottom;
 }
