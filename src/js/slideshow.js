@@ -71,10 +71,36 @@ $.when(slidesRequest, templateRequest).done(function (slide, template) {
   });
 
   renderMermaidDiagrams(); // Render mermaid diagram when displaying slide (e.g.: by direct link).
+  renderMathFormulas();
   slideshow.on("afterShowSlide", renderMermaidDiagrams); // Render mermaid diagram when navigating to next slide.
+  slideshow.on("afterShowSlide", renderMathFormulas);
   slideshow.on("afterShowSlide", fitAutoImagesToContent);
   $(window).on("resize", fitAutoImagesToContent);
 });
+
+/**
+ * Renders LaTeX math in slide content using KaTeX auto-render.
+ * Supports inline `$...$` and block `$$...$$` delimiters.
+ */
+function renderMathFormulas() {
+  if (typeof renderMathInElement !== "function") {
+    return;
+  }
+
+  document
+    .querySelectorAll(".remark-visible .remark-slide-content")
+    .forEach((slideContent) => {
+      renderMathInElement(slideContent, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"],
+        throwOnError: false,
+        strict: "ignore"
+      });
+    });
+}
 
 /**
  * Creates link element pointing to slides custom CSS and adds it to DOM.
