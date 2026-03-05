@@ -524,7 +524,17 @@ function normalizeMarkdownImages() {
         image.appendTo(figure);
 
         if (caption.length > 0) {
-          $("<figcaption></figcaption>").text(caption).appendTo(figure);
+          const captionNode = $("<figcaption></figcaption>");
+          const lines = caption.split(/<br\s*\/?>|\r?\n/i);
+
+          lines.forEach((line, index) => {
+            if (index > 0) {
+              captionNode.append("<br>");
+            }
+            captionNode.append(document.createTextNode(line));
+          });
+
+          captionNode.appendTo(figure);
         }
 
         paragraph.replaceWith(figure);
