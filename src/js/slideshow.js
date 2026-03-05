@@ -118,7 +118,7 @@ function renderMermaidDiagrams() {
 
 /**
  * Prepares slide titles in one pass:
- * - supports `### #` as an explicit no-title marker
+ * - supports `### !` as an explicit no-title marker
  * - inherits H3 title across following slides
  * - adds (index/total) counters for repeated contiguous H3 titles
  */
@@ -150,7 +150,7 @@ function prepareSlideTitles() {
     const titleNode = getTitleNode(slideContent);
     const currentTitle = (titleNode.text() || "").trim();
 
-    if (currentTitle === "#") {
+    if (currentTitle === "!") {
       titleNode.remove();
       slideContainer.removeAttr("data-title");
       return;

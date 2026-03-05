@@ -80,7 +80,7 @@ Subsequent slides can have any content.
 
 If the next slide does not provide its own `###` title, it inherits the last `###` title.
 
-You can force a slide without title using `### #`.
+You can force a slide without title using `### !`.
 
 When multiple consecutive slides share the same title, a counter is added automatically: `(1/3)`, `(2/3)`, `(3/3)`.
 
@@ -95,7 +95,7 @@ Content continues with inherited `Topic title` title.
 
 ---
 
-###
+### !
 
 This slide has no title.
 ```
@@ -112,7 +112,7 @@ Content continues with inherited `Topic title` title.
 
 ---
 
-###
+### !
 
 This slide has no title.
 
