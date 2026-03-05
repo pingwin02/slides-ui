@@ -181,7 +181,6 @@
   height: 100%;
   box-sizing: border-box;
   text-align: justify;
-  padding-bottom: 4.2em;
 }
 
 .remark-slide-container:nth-of-type(n + 2) .slide-footnotes {
