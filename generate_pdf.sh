@@ -18,9 +18,9 @@ function generate_pdf() {
     output_dir="$2"
     selected_course_name="$3"
 
-    url_pattern="s/.*(<\([^)]*\)>)/\1/p" # Used to extract URL to course from markdown list.
-    name_pattern="s/^\* \[\([^]]*\)\](.*)/\1/p" # Used to extract name of the course from markdown list.
-    list_item_pattern="^\*" # Used to match markdown enumeration entries from text.
+    url_pattern="s/.*(\([^)]*\))/\1/p" # Used to extract URL to course from markdown list.
+    name_pattern="s/^\- \[\([^]]*\)\](.*)/\1/p" # Used to extract name of the course from markdown list.
+    list_item_pattern="^\- \[" # Used to match markdown enumeration entries from text.
     markdown_accept_header="Accept: text/markdown" # Accept header for fetching slides in markdown format.
     slides_root_dir="/slides" # Directory inside container used as binding mount.
     slides_resource="slides" # Name of the relative (to base URL) resource where slides in markdown format are available.

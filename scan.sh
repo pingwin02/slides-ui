@@ -19,7 +19,7 @@ for dir in "$slides_dir"/*/; do
         md_file=$(find "$dir" -maxdepth 1 -name "*.md" | head -n 1)
         if [ -n "$md_file" ]; then
             md_file_name=$(basename "$md_file")
-            echo "* [$dir_name](<$dir_name/$md_file_name>)" >> $index_file
+            echo "- [$dir_name]($dir_name/$md_file_name)" >> $index_file
         fi
     fi
 done
