@@ -181,6 +181,32 @@
   height: 100%;
   box-sizing: border-box;
   text-align: justify;
+  padding-bottom: 4.2em;
+}
+
+.remark-slide-container:nth-of-type(n + 2) .slide-footnotes {
+  position: absolute;
+  right: 6em;
+  bottom: 2.5em;
+  left: 6em;
+  border-top: 1px solid #888;
+  padding-top: 0.35em;
+  font-size: 0.62em;
+  line-height: 1.25;
+}
+
+.remark-slide-container:nth-of-type(n + 2) .slide-footnotes ol {
+  margin: 0;
+  padding-left: 1.45em;
+}
+
+.remark-slide-container:nth-of-type(n + 2) .slide-footnotes li {
+  margin: 0.12em 0;
+}
+
+.remark-slide-container:nth-of-type(n + 2) .footnote-ref {
+  font-size: 0.68em;
+  vertical-align: super;
 }
 
 .remark-slide-container:nth-of-type(n + 2)

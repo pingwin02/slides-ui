@@ -128,6 +128,34 @@ It may also be in several paragraphs.
 
 ---
 
+### Footnotes
+
+Footnotes can be written using markdown-like syntax: `[^id]` and `[^id]: text`.
+
+This sentence has a footnote[^note1], and this one reuses the same note[^note1].
+
+Another sentence can have a second note[^note2].
+
+[^note1]: This is the first footnote rendered at the bottom of the slide.
+
+[^note2]: This is the second footnote.
+
+```markdown
+### Footnotes
+
+Footnotes can be written using markdown-like syntax: `[^id]` and `[^id]: text`.
+
+This sentence has a footnote[^note1], and this one reuses the same note[^note1].
+
+Another sentence can have a second note[^note2].
+
+[^note1]: This is the first footnote rendered at the bottom of the slide.
+
+[^note2]: This is the second footnote.
+```
+
+---
+
 ### Table
 
 Tables are made simply.
