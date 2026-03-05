@@ -76,6 +76,48 @@ Subsequent slides can have any content.
 
 ---
 
+### Automatic section title and counter
+
+If the next slide does not provide its own `###` title, it inherits the last `###` title.
+
+You can force a slide without title using `### #`.
+
+When multiple consecutive slides share the same title, a counter is added automatically: `(1/3)`, `(2/3)`, `(3/3)`.
+
+```md
+### Topic title
+
+Intro for this section.
+
+---
+
+Content continues with inherited `Topic title` title.
+
+---
+
+###
+
+This slide has no title.
+```
+
+---
+
+### Topic title
+
+Intro for this section.
+
+---
+
+Content continues with inherited `Topic title` title.
+
+---
+
+###
+
+This slide has no title.
+
+---
+
 ### Separating slides
 
 Slides are separated with `---`.

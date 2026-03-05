@@ -52,12 +52,8 @@ $.when(slidesRequest, templateRequest).done(function (slide, template) {
       ratio: "16:9"
     },
     (event) => {
-      // Add each slide title (h3 header) as data-title attribute, so it can be used in CSS selectors.
-      $(".remark-slide-container").each(function () {
-        $(this).attr("data-title", $(this).find("h3").text());
-      });
-
       normalizeSectionSlides();
+      prepareSlideTitles();
       wrapSlideBody();
       ensureSlideStructureOrder();
       normalizeMarkdownFootnotes();
@@ -118,6 +114,130 @@ function renderMermaidDiagrams() {
       mermaid.init(undefined, diagram);
     }
   });
+}
+
+/**
+ * Prepares slide titles in one pass:
+ * - supports `### #` as an explicit no-title marker
+ * - inherits H3 title across following slides
+ * - adds (index/total) counters for repeated contiguous H3 titles
+ */
+function prepareSlideTitles() {
+  const slides = $(".remark-slide-content")
+    .toArray()
+    .filter((slideNode) => !$(slideNode).hasClass("end-slide"));
+  if (slides.length === 0) {
+    return;
+  }
+
+  const getTitleNode = (slideContent) => {
+    const fromHeader = slideContent
+      .children(".slide-header")
+      .children("h3")
+      .first();
+    if (fromHeader.length > 0) {
+      return fromHeader;
+    }
+
+    return slideContent.children("h3").first();
+  };
+
+  let activeSectionTitle = "";
+
+  slides.forEach((slideNode) => {
+    const slideContent = $(slideNode);
+    const slideContainer = slideContent.closest(".remark-slide-container");
+    const titleNode = getTitleNode(slideContent);
+    const currentTitle = (titleNode.text() || "").trim();
+
+    if (currentTitle === "#") {
+      titleNode.remove();
+      slideContainer.removeAttr("data-title");
+      return;
+    }
+
+    if (currentTitle.length > 0) {
+      activeSectionTitle = currentTitle;
+      slideContainer.attr("data-title", currentTitle);
+      return;
+    }
+
+    const hasTopLevelSectionHeading =
+      slideContent.children("h1, h2, .section").length > 0 ||
+      slideContent.children(".slide-header").children("h1, h2").length > 0;
+
+    if (hasTopLevelSectionHeading) {
+      activeSectionTitle = "";
+      const fallbackTitle = (
+        slideContent.children("h2, h1").first().text() ||
+        slideContent
+          .children(".slide-header")
+          .children("h2, h1")
+          .first()
+          .text() ||
+        ""
+      ).trim();
+
+      if (fallbackTitle.length > 0) {
+        slideContainer.attr("data-title", fallbackTitle);
+      } else {
+        slideContainer.removeAttr("data-title");
+      }
+      return;
+    }
+
+    if (activeSectionTitle.length > 0) {
+      const inheritedHeading = $("<h3></h3>").text(activeSectionTitle);
+      const header = slideContent.children(".slide-header");
+      if (header.length > 0) {
+        inheritedHeading.appendTo(header);
+      } else {
+        inheritedHeading.appendTo(slideContent);
+      }
+      slideContainer.attr("data-title", activeSectionTitle);
+      return;
+    }
+
+    slideContainer.removeAttr("data-title");
+  });
+
+  slides.forEach((slideNode) => {
+    const titleNode = getTitleNode($(slideNode));
+    if (titleNode.length > 0) {
+      titleNode.find(".slide-title-counter").remove();
+    }
+  });
+
+  let runStart = 0;
+  while (runStart < slides.length) {
+    const runTitle = (getTitleNode($(slides[runStart])).text() || "").trim();
+    let runEnd = runStart + 1;
+
+    while (runEnd < slides.length) {
+      const nextTitle = (getTitleNode($(slides[runEnd])).text() || "").trim();
+      if (nextTitle !== runTitle) {
+        break;
+      }
+      runEnd += 1;
+    }
+
+    const runLength = runEnd - runStart;
+    if (runTitle.length > 0 && runLength > 1) {
+      for (let index = runStart; index < runEnd; index += 1) {
+        const titleNode = getTitleNode($(slides[index]));
+        if (titleNode.length === 0) {
+          continue;
+        }
+
+        const counter = document.createElement("span");
+        counter.className = "slide-title-counter";
+        counter.textContent = ` (${index - runStart + 1}/${runLength})`;
+        titleNode.append(counter);
+      }
+    }
+
+    runStart = runEnd;
+  }
 }
 
 /**
