@@ -531,7 +531,7 @@ function normalizeMarkdownImages() {
             if (index > 0) {
               captionNode.append("<br>");
             }
-            captionNode.append(document.createTextNode(line));
+            appendCaptionTextWithLinks(captionNode, line);
           });
 
           captionNode.appendTo(figure);
@@ -540,6 +540,58 @@ function normalizeMarkdownImages() {
         paragraph.replaceWith(figure);
       });
   });
+}
+
+function appendCaptionTextWithLinks(captionNode, line) {
+  const markdownLinkRegex = /\[([^\]]+)\]\(([^)\s]+)\)/g;
+  let lastIndex = 0;
+  let match;
+
+  while ((match = markdownLinkRegex.exec(line)) !== null) {
+    if (match.index > lastIndex) {
+      appendPlainTextWithAutoLinks(
+        captionNode,
+        line.slice(lastIndex, match.index)
+      );
+    }
+
+    appendLinkNode(captionNode, match[1], match[2]);
+    lastIndex = markdownLinkRegex.lastIndex;
+  }
+
+  if (lastIndex < line.length) {
+    appendPlainTextWithAutoLinks(captionNode, line.slice(lastIndex));
+  }
+}
+
+function appendPlainTextWithAutoLinks(captionNode, text) {
+  const urlRegex = /(https?:\/\/[^\s<]+)/g;
+  let lastIndex = 0;
+  let match;
+
+  while ((match = urlRegex.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      captionNode.append(
+        document.createTextNode(text.slice(lastIndex, match.index))
+      );
+    }
+
+    appendLinkNode(captionNode, match[0], match[0]);
+    lastIndex = urlRegex.lastIndex;
+  }
+
+  if (lastIndex < text.length) {
+    captionNode.append(document.createTextNode(text.slice(lastIndex)));
+  }
+}
+
+function appendLinkNode(captionNode, label, href) {
+  const link = document.createElement("a");
+  link.href = href;
+  link.textContent = label;
+  link.target = "_blank";
+  link.rel = "noopener noreferrer";
+  captionNode.append(link);
 }
 
 /**
