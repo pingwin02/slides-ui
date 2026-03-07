@@ -342,6 +342,11 @@ table {
   border-collapse: collapse;
   border-spacing: 0;
   width: 100%;
+  margin-top: 1em;
+}
+
+.mermaid {
+  margin: 1em auto;
 }
 
 @page {
