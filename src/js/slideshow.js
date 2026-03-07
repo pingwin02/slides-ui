@@ -169,78 +169,122 @@ function isEndSlideContent(slideNode) {
 function prepareSlideTitles() {
   const rawSlides = $(".remark-slide-content")
     .toArray()
-    .filter((slideNode) => {
-      return !isEndSlideContent(slideNode);
-    });
+    .filter((slideNode) => !isEndSlideContent(slideNode));
   if (rawSlides.length === 0) {
     return;
   }
 
+  const getTitleNode = (slideContent) => {
+    const titleFromHeader = slideContent
+      .children(".slide-header")
+      .children("h3")
+      .first();
+    return titleFromHeader.length > 0
+      ? titleFromHeader
+      : slideContent.children("h3").first();
+  };
+
   const getSlideNumber = (slideContent) => {
-    const slideNumberText = (
+    const text = (
       slideContent.children(".remark-slide-number").first().text() || ""
     ).trim();
-    const match = slideNumberText.match(/^(\d+)\s*\/\s*\d+$/);
+    const match = text.match(/^(\d+)\s*\/\s*\d+$/);
     return match ? Number(match[1]) : null;
   };
 
-  // remark can create duplicate DOM containers for the same logical slide;
-  // group by slide number so counters are computed once per logical slide.
-  const groupMap = new Map();
-  const slideGroups = [];
+  const bySlideNumber = new Map();
+  const groups = [];
   rawSlides.forEach((slideNode) => {
     const slideContent = $(slideNode);
     const slideNumber = getSlideNumber(slideContent);
+    const existingGroup =
+      slideNumber === null ? null : bySlideNumber.get(slideNumber);
 
-    if (slideNumber === null) {
-      slideGroups.push({ members: [slideNode], representative: slideNode });
+    if (existingGroup) {
+      existingGroup.members.push(slideNode);
       return;
     }
 
-    if (!groupMap.has(slideNumber)) {
-      const group = { members: [slideNode], representative: slideNode };
-      groupMap.set(slideNumber, group);
-      slideGroups.push(group);
-      return;
+    const group = { representative: slideNode, members: [slideNode] };
+    groups.push(group);
+    if (slideNumber !== null) {
+      bySlideNumber.set(slideNumber, group);
     }
-
-    groupMap.get(slideNumber).members.push(slideNode);
   });
 
-  const slides = slideGroups.map((group) => group.representative);
+  const slides = groups.map((group) => group.representative);
+  const groupByRepresentative = new Map(
+    groups.map((group) => [group.representative, group])
+  );
 
   const forEachGroupMember = (slideNode, callback) => {
-    const group = slideGroups.find(
-      (entry) => entry.representative === slideNode
-    );
+    const group = groupByRepresentative.get(slideNode);
     if (!group) {
       callback(slideNode);
       return;
     }
-
     group.members.forEach((member) => callback(member));
   };
 
-  // Reset previously injected inherited titles/counters before recomputing.
-  slides.forEach((slideNode) => {
+  const clearInjectedTitles = (slideNode) => {
     forEachGroupMember(slideNode, (memberNode) => {
       const slideContent = $(memberNode);
       slideContent.find("h3.slide-title-inherited").remove();
       slideContent.find(".slide-title-counter").remove();
     });
-  });
-
-  const getTitleNode = (slideContent) => {
-    const fromHeader = slideContent
-      .children(".slide-header")
-      .children("h3")
-      .first();
-    if (fromHeader.length > 0) {
-      return fromHeader;
-    }
-
-    return slideContent.children("h3").first();
   };
+
+  const setNoTitleOverride = (slideNode, enabled) => {
+    forEachGroupMember(slideNode, (memberNode) => {
+      const memberContent = $(memberNode);
+      if (enabled) {
+        memberContent.attr("data-no-title-override", "true");
+      } else {
+        memberContent.removeAttr("data-no-title-override");
+      }
+    });
+  };
+
+  const setDataTitle = (slideNode, title) => {
+    forEachGroupMember(slideNode, (memberNode) => {
+      const container = $(memberNode).closest(".remark-slide-container");
+      if ((title || "").length > 0) {
+        container.attr("data-title", title);
+      } else {
+        container.removeAttr("data-title");
+      }
+    });
+  };
+
+  const appendInheritedTitle = (slideNode, title) => {
+    forEachGroupMember(slideNode, (memberNode) => {
+      const memberContent = $(memberNode);
+      const inheritedHeading = $('<h3 class="slide-title-inherited"></h3>').text(
+        title
+      );
+      const header = memberContent.children(".slide-header");
+      if (header.length > 0) {
+        inheritedHeading.appendTo(header);
+      } else {
+        inheritedHeading.appendTo(memberContent);
+      }
+    });
+    setDataTitle(slideNode, title);
+  };
+
+  const getFallbackTitle = (slideContent) => {
+    return (
+      slideContent.children("h2, h1").first().text() ||
+      slideContent
+        .children(".slide-header")
+        .children("h2, h1")
+        .first()
+        .text() ||
+      ""
+    ).trim();
+  };
+
+  slides.forEach(clearInjectedTitles);
 
   let activeSectionTitle = "";
 
@@ -249,11 +293,16 @@ function prepareSlideTitles() {
     const titleNode = getTitleNode(slideContent);
     const currentTitle = (titleNode.text() || "").trim();
 
+    if (slideContent.attr("data-no-title-override") === "true") {
+      setDataTitle(slideNode, "");
+      return;
+    }
+
     const isSectionDivider =
       slideContent.hasClass("section-slide") ||
       slideContent.find(".slide-body-content > .section > h2").length > 0;
-
     if (isSectionDivider) {
+      setNoTitleOverride(slideNode, false);
       activeSectionTitle = "";
       const sectionTitle = (
         slideContent
@@ -261,98 +310,50 @@ function prepareSlideTitles() {
           .first()
           .text() || ""
       ).trim();
-
-      forEachGroupMember(slideNode, (memberNode) => {
-        const memberContainer = $(memberNode).closest(
-          ".remark-slide-container"
-        );
-        if (sectionTitle.length > 0) {
-          memberContainer.attr("data-title", sectionTitle);
-        } else {
-          memberContainer.removeAttr("data-title");
-        }
-      });
+      setDataTitle(slideNode, sectionTitle);
       return;
     }
 
     if (currentTitle === "!") {
+      setNoTitleOverride(slideNode, true);
       forEachGroupMember(slideNode, (memberNode) => {
         getTitleNode($(memberNode)).remove();
-        $(memberNode)
-          .closest(".remark-slide-container")
-          .removeAttr("data-title");
       });
+      setDataTitle(slideNode, "");
       return;
     }
 
     if (currentTitle.length > 0) {
+      setNoTitleOverride(slideNode, false);
       activeSectionTitle = currentTitle;
-      forEachGroupMember(slideNode, (memberNode) => {
-        $(memberNode)
-          .closest(".remark-slide-container")
-          .attr("data-title", currentTitle);
-      });
+      setDataTitle(slideNode, currentTitle);
       return;
     }
 
     const hasTopLevelSectionHeading =
       slideContent.children("h1, h2, .section").length > 0 ||
       slideContent.children(".slide-header").children("h1, h2").length > 0;
-
     if (hasTopLevelSectionHeading) {
+      setNoTitleOverride(slideNode, false);
       activeSectionTitle = "";
-      const fallbackTitle = (
-        slideContent.children("h2, h1").first().text() ||
-        slideContent
-          .children(".slide-header")
-          .children("h2, h1")
-          .first()
-          .text() ||
-        ""
-      ).trim();
-
-      forEachGroupMember(slideNode, (memberNode) => {
-        const memberContainer = $(memberNode).closest(
-          ".remark-slide-container"
-        );
-        if (fallbackTitle.length > 0) {
-          memberContainer.attr("data-title", fallbackTitle);
-        } else {
-          memberContainer.removeAttr("data-title");
-        }
-      });
+      setDataTitle(slideNode, getFallbackTitle(slideContent));
       return;
     }
 
     if (activeSectionTitle.length > 0) {
-      forEachGroupMember(slideNode, (memberNode) => {
-        const memberContent = $(memberNode);
-        const inheritedHeading = $(
-          '<h3 class="slide-title-inherited"></h3>'
-        ).text(activeSectionTitle);
-        const header = memberContent.children(".slide-header");
-        if (header.length > 0) {
-          inheritedHeading.appendTo(header);
-        } else {
-          inheritedHeading.appendTo(memberContent);
-        }
-        memberContent
-          .closest(".remark-slide-container")
-          .attr("data-title", activeSectionTitle);
-      });
+      setNoTitleOverride(slideNode, false);
+      appendInheritedTitle(slideNode, activeSectionTitle);
       return;
     }
 
-    forEachGroupMember(slideNode, (memberNode) => {
-      $(memberNode).closest(".remark-slide-container").removeAttr("data-title");
-    });
+    setDataTitle(slideNode, "");
+    setNoTitleOverride(slideNode, false);
   });
 
   slides.forEach((slideNode) => {
-    const titleNode = getTitleNode($(slideNode));
-    if (titleNode.length > 0) {
-      titleNode.find(".slide-title-counter").remove();
-    }
+    forEachGroupMember(slideNode, (memberNode) => {
+      getTitleNode($(memberNode)).find(".slide-title-counter").remove();
+    });
   });
 
   let runStart = 0;
