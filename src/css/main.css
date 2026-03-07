@@ -76,6 +76,7 @@
 .remark-slide-container:nth-of-type(1) .remark-slide-content {
   background-color: rgb(0, 55, 103);
   color: white;
+  position: relative;
 }
 
 .remark-slide-content {
@@ -105,6 +106,17 @@
 .remark-slide-container:nth-of-type(1) p {
   text-align: center;
   font-size: 20px;
+}
+
+.remark-slide-container:nth-of-type(1) p.slide-title-date {
+  position: absolute;
+  right: 0;
+  bottom: 1rem;
+  left: 0;
+  margin: 0;
+  z-index: 3;
+  text-align: center;
+  font-size: 18px;
 }
 
 .remark-slide-container:nth-of-type(1) .remark-slide-number {

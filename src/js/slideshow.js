@@ -53,9 +53,10 @@ $.when(slidesRequest, templateRequest).done(function (slide, template) {
     },
     (event) => {
       normalizeSectionSlides();
-      prepareSlideTitles();
       wrapSlideBody();
       ensureSlideStructureOrder();
+      prepareSlideTitles();
+      injectTitleSlideDate();
       normalizeMarkdownFootnotes();
       normalizeMarkdownImages();
       groupAutoImagesIntoRows();
@@ -74,6 +75,8 @@ $.when(slidesRequest, templateRequest).done(function (slide, template) {
   renderMathFormulas();
   slideshow.on("afterShowSlide", renderMermaidDiagrams); // Render mermaid diagram when navigating to next slide.
   slideshow.on("afterShowSlide", renderMathFormulas);
+  slideshow.on("afterShowSlide", prepareSlideTitles);
+  slideshow.on("afterShowSlide", injectTitleSlideDate);
   slideshow.on("afterShowSlide", fitAutoImagesToContent);
   $(window).on("resize", fitAutoImagesToContent);
 });
@@ -143,18 +146,89 @@ function renderMermaidDiagrams() {
 }
 
 /**
+ * Returns true if slide content belongs to terminal/end slide.
+ */
+function isEndSlideContent(slideNode) {
+  const slideContent = $(slideNode);
+  const slideContainer = slideContent.closest(".remark-slide-container");
+
+  return (
+    slideContent.hasClass("end-slide") ||
+    slideContainer.hasClass("end-slide") ||
+    slideContent.closest(".end-slide").length > 0 ||
+    slideContent.find(".end-slide-logo-wrapper, .end-slide-logo").length > 0
+  );
+}
+
+/**
  * Prepares slide titles in one pass:
  * - supports `### !` as an explicit no-title marker
  * - inherits H3 title across following slides
  * - adds (index/total) counters for repeated contiguous H3 titles
  */
 function prepareSlideTitles() {
-  const slides = $(".remark-slide-content")
+  const rawSlides = $(".remark-slide-content")
     .toArray()
-    .filter((slideNode) => !$(slideNode).hasClass("end-slide"));
-  if (slides.length === 0) {
+    .filter((slideNode) => {
+      return !isEndSlideContent(slideNode);
+    });
+  if (rawSlides.length === 0) {
     return;
   }
+
+  const getSlideNumber = (slideContent) => {
+    const slideNumberText = (
+      slideContent.children(".remark-slide-number").first().text() || ""
+    ).trim();
+    const match = slideNumberText.match(/^(\d+)\s*\/\s*\d+$/);
+    return match ? Number(match[1]) : null;
+  };
+
+  // remark can create duplicate DOM containers for the same logical slide;
+  // group by slide number so counters are computed once per logical slide.
+  const groupMap = new Map();
+  const slideGroups = [];
+  rawSlides.forEach((slideNode) => {
+    const slideContent = $(slideNode);
+    const slideNumber = getSlideNumber(slideContent);
+
+    if (slideNumber === null) {
+      slideGroups.push({ members: [slideNode], representative: slideNode });
+      return;
+    }
+
+    if (!groupMap.has(slideNumber)) {
+      const group = { members: [slideNode], representative: slideNode };
+      groupMap.set(slideNumber, group);
+      slideGroups.push(group);
+      return;
+    }
+
+    groupMap.get(slideNumber).members.push(slideNode);
+  });
+
+  const slides = slideGroups.map((group) => group.representative);
+
+  const forEachGroupMember = (slideNode, callback) => {
+    const group = slideGroups.find(
+      (entry) => entry.representative === slideNode
+    );
+    if (!group) {
+      callback(slideNode);
+      return;
+    }
+
+    group.members.forEach((member) => callback(member));
+  };
+
+  // Reset previously injected inherited titles/counters before recomputing.
+  slides.forEach((slideNode) => {
+    forEachGroupMember(slideNode, (memberNode) => {
+      const slideContent = $(memberNode);
+      slideContent.find("h3.slide-title-inherited").remove();
+      slideContent.find(".slide-title-counter").remove();
+    });
+  });
 
   const getTitleNode = (slideContent) => {
     const fromHeader = slideContent
@@ -172,19 +246,52 @@ function prepareSlideTitles() {
 
   slides.forEach((slideNode) => {
     const slideContent = $(slideNode);
-    const slideContainer = slideContent.closest(".remark-slide-container");
     const titleNode = getTitleNode(slideContent);
     const currentTitle = (titleNode.text() || "").trim();
 
+    const isSectionDivider =
+      slideContent.hasClass("section-slide") ||
+      slideContent.find(".slide-body-content > .section > h2").length > 0;
+
+    if (isSectionDivider) {
+      activeSectionTitle = "";
+      const sectionTitle = (
+        slideContent
+          .find(".slide-body-content > .section > h2")
+          .first()
+          .text() || ""
+      ).trim();
+
+      forEachGroupMember(slideNode, (memberNode) => {
+        const memberContainer = $(memberNode).closest(
+          ".remark-slide-container"
+        );
+        if (sectionTitle.length > 0) {
+          memberContainer.attr("data-title", sectionTitle);
+        } else {
+          memberContainer.removeAttr("data-title");
+        }
+      });
+      return;
+    }
+
     if (currentTitle === "!") {
-      titleNode.remove();
-      slideContainer.removeAttr("data-title");
+      forEachGroupMember(slideNode, (memberNode) => {
+        getTitleNode($(memberNode)).remove();
+        $(memberNode)
+          .closest(".remark-slide-container")
+          .removeAttr("data-title");
+      });
       return;
     }
 
     if (currentTitle.length > 0) {
       activeSectionTitle = currentTitle;
-      slideContainer.attr("data-title", currentTitle);
+      forEachGroupMember(slideNode, (memberNode) => {
+        $(memberNode)
+          .closest(".remark-slide-container")
+          .attr("data-title", currentTitle);
+      });
       return;
     }
 
@@ -204,27 +311,41 @@ function prepareSlideTitles() {
         ""
       ).trim();
 
-      if (fallbackTitle.length > 0) {
-        slideContainer.attr("data-title", fallbackTitle);
-      } else {
-        slideContainer.removeAttr("data-title");
-      }
+      forEachGroupMember(slideNode, (memberNode) => {
+        const memberContainer = $(memberNode).closest(
+          ".remark-slide-container"
+        );
+        if (fallbackTitle.length > 0) {
+          memberContainer.attr("data-title", fallbackTitle);
+        } else {
+          memberContainer.removeAttr("data-title");
+        }
+      });
       return;
     }
 
     if (activeSectionTitle.length > 0) {
-      const inheritedHeading = $("<h3></h3>").text(activeSectionTitle);
-      const header = slideContent.children(".slide-header");
-      if (header.length > 0) {
-        inheritedHeading.appendTo(header);
-      } else {
-        inheritedHeading.appendTo(slideContent);
-      }
-      slideContainer.attr("data-title", activeSectionTitle);
+      forEachGroupMember(slideNode, (memberNode) => {
+        const memberContent = $(memberNode);
+        const inheritedHeading = $(
+          '<h3 class="slide-title-inherited"></h3>'
+        ).text(activeSectionTitle);
+        const header = memberContent.children(".slide-header");
+        if (header.length > 0) {
+          inheritedHeading.appendTo(header);
+        } else {
+          inheritedHeading.appendTo(memberContent);
+        }
+        memberContent
+          .closest(".remark-slide-container")
+          .attr("data-title", activeSectionTitle);
+      });
       return;
     }
 
-    slideContainer.removeAttr("data-title");
+    forEachGroupMember(slideNode, (memberNode) => {
+      $(memberNode).closest(".remark-slide-container").removeAttr("data-title");
+    });
   });
 
   slides.forEach((slideNode) => {
@@ -250,20 +371,128 @@ function prepareSlideTitles() {
     const runLength = runEnd - runStart;
     if (runTitle.length > 0 && runLength > 1) {
       for (let index = runStart; index < runEnd; index += 1) {
-        const titleNode = getTitleNode($(slides[index]));
-        if (titleNode.length === 0) {
-          continue;
-        }
+        forEachGroupMember(slides[index], (memberNode) => {
+          const titleNode = getTitleNode($(memberNode));
+          if (titleNode.length === 0) {
+            return;
+          }
 
-        const counter = document.createElement("span");
-        counter.className = "slide-title-counter";
-        counter.textContent = ` (${index - runStart + 1}/${runLength})`;
-        titleNode.append(counter);
+          const counter = document.createElement("span");
+          counter.className = "slide-title-counter";
+          counter.textContent = ` (${index - runStart + 1}/${runLength})`;
+          titleNode.append(counter);
+        });
       }
     }
 
     runStart = runEnd;
   }
+}
+
+/**
+ * Adds current date to the first (title) slide only.
+ * Date is generated dynamically on render and updated idempotently.
+ */
+function injectTitleSlideDate() {
+  const slides = $(".remark-slide-content")
+    .toArray()
+    .filter((slideNode) => {
+      return !isEndSlideContent(slideNode);
+    });
+
+  if (slides.length === 0) {
+    return;
+  }
+
+  const titleSlide = $(slides[0]);
+  const titleSlideContainer = titleSlide.closest(".remark-slide-container");
+  const header = titleSlide.children(".slide-header").first();
+  const hasTitleLayout =
+    header.children("h1").length > 0 && header.children("h2").length > 0;
+  if (!hasTitleLayout) {
+    return;
+  }
+
+  const bodyContent = titleSlide
+    .children(".slide-body")
+    .children(".slide-body-content")
+    .first();
+
+  const overrideDate = extractTitleDateOverride(bodyContent);
+  const hideDate = overrideDate === "!";
+
+  if (hideDate) {
+    titleSlide.children("p.slide-title-date").remove();
+    titleSlideContainer.removeClass("has-title-date");
+    return;
+  }
+
+  titleSlideContainer.addClass("has-title-date");
+
+  const currentDate = new Intl.DateTimeFormat("pl-PL", {
+    day: "numeric",
+    month: "long",
+    year: "numeric"
+  }).format(new Date());
+  const dateText = overrideDate || currentDate;
+  let dateNode = titleSlide.children("p.slide-title-date").first();
+
+  if (dateNode.length === 0) {
+    dateNode = $('<p class="slide-title-date"></p>');
+    titleSlide.append(dateNode);
+  }
+
+  dateNode.text(dateText);
+}
+
+/**
+ * Allows overriding auto date on title slide using:
+ * - `Date: <value>`
+ * - `Date: !` to hide date
+ * - an existing `.slide-title-date` paragraph in slide body.
+ */
+function extractTitleDateOverride(bodyContent) {
+  if (!bodyContent || bodyContent.length === 0) {
+    return "";
+  }
+
+  const cachedOverride = bodyContent.attr("data-title-date-override");
+  if (typeof cachedOverride === "string") {
+    return cachedOverride;
+  }
+
+  const inlineDateNode = bodyContent.children("p.slide-title-date").first();
+  if (inlineDateNode.length > 0) {
+    const inlineDate = (inlineDateNode.text() || "").trim();
+    inlineDateNode.addClass("slide-title-date-override-source");
+    inlineDateNode.hide();
+    if (inlineDate.length > 0) {
+      bodyContent.attr("data-title-date-override", inlineDate);
+      return inlineDate;
+    }
+  }
+
+  let overrideDate = "";
+  bodyContent.children("p").each(function () {
+    if (overrideDate.length > 0) {
+      return;
+    }
+
+    const paragraph = $(this);
+    const text = (paragraph.text() || "").trim();
+    const match = text.match(/^date\s*:\s*(.+)$/i);
+    if (!match) {
+      return;
+    }
+
+    overrideDate = (match[1] || "").trim();
+    paragraph.addClass("slide-title-date-override-source");
+    paragraph.hide();
+  });
+
+  bodyContent.attr("data-title-date-override", overrideDate);
+
+  return overrideDate;
 }
 
 /**

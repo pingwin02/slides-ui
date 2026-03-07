@@ -54,12 +54,43 @@ What's the flow:
 
 The title slide should have the following format.
 
+Date is added automatically at the bottom of the title slide.
+
 ```md
 # Course name
 
 ## Topic
 
 Author
+```
+
+---
+
+### Title slide date override
+
+To override the automatic date, add a line in the title slide body:
+
+- `Date: ...`
+- `Date: !` to hide the date
+
+```md
+# Course name
+
+## Topic
+
+Author
+
+Date: 1 January 2026
+```
+
+```md
+# Course name
+
+## Topic
+
+Author
+
+Date: !
 ```
 
 ---
@@ -194,6 +225,34 @@ Another sentence can have a second note[^note2].
 [^note1]: This is the first footnote rendered at the bottom of the slide.
 
 [^note2]: This is the second footnote.
+```
+
+---
+
+### LaTeX formulas
+
+Mathematical formulas can be written using LaTeX syntax.
+
+Inline formula: $E = mc^2$.
+
+Block formula:
+
+$$
+\int_{0}^{\infty} e^{-x^2} \, dx = \frac{\sqrt{\pi}}{2}
+$$
+
+```markdown
+### LaTeX formulas
+
+Mathematical formulas can be written using LaTeX syntax.
+
+Inline formula: $E = mc^2$.
+
+Block formula:
+
+$$
+\int_{0}^{\infty} e^{-x^2} \, dx = \frac{\sqrt{\pi}}{2}
+$$
 ```
 
 ---

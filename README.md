@@ -32,6 +32,12 @@ npm run init -- [course_name]
 
 to generate initial markdown files.
 
+To remove generated course files, use:
+
+```bash
+npm run delete -- [course_name]
+```
+
 In order to start a server use:
 
 ```bash
