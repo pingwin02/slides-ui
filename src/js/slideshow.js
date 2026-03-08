@@ -44,6 +44,8 @@ $.when(slidesRequest, templateRequest).done(function (slide, template) {
     '\n\n---\nlayout: false\nclass: end-slide\n\n<div class="end-slide-logo-wrapper">\n    <img class="end-slide-logo" alt="PG Logo" src="/img/pg_logo_white.svg"/>\n</div>\n';
   md = md.replace(/\r\n/g, "\n");
 
+  md = generateAgenda(md);
+
   $("#source").text(md);
 
   // Create slideshow.
@@ -122,6 +124,143 @@ function appendCustomSlides(path) {
   customStyles.rel = "stylesheet";
   customStyles.type = "text/css";
   document.head.appendChild(customStyles);
+}
+
+/**
+ * Generates automatic agenda slide from slide headers.
+ * Can be controlled with HTML comments on title slide:
+ * - no tag: disabled by default
+ * - <!-- agenda --> to enable with sections and slide titles
+ * - <!-- agenda-sections --> to enable with sections only
+ * Automatically splits into two columns if there are many items.
+ */
+function generateAgenda(markdown) {
+  const slides = markdown.split(/\n---\n/);
+
+  if (slides.length < 3) {
+    return markdown;
+  }
+
+  const titleSlide = slides[1];
+  const hasAgenda = titleSlide.includes("<!-- agenda -->");
+  const hasAgendaSections = titleSlide.includes("<!-- agenda-sections -->");
+
+  if (!hasAgenda && !hasAgendaSections) {
+    return markdown;
+  }
+
+  if (markdown.match(/^###?\s+Agenda\s*$/im)) {
+    return markdown;
+  }
+
+  const sections = [];
+  let currentSection = null;
+
+  for (let i = 2; i < slides.length; i++) {
+    const slide = slides[i];
+    const slideNumber = i + 1;
+
+    if (
+      slide.includes("class: end-slide") ||
+      slide.includes("end-slide-logo")
+    ) {
+      continue;
+    }
+
+    const h2Match = slide.match(/^##\s+(.+)$/m);
+    if (h2Match) {
+      const headerText = h2Match[1].trim();
+      currentSection = {
+        text: headerText,
+        slideNumber: slideNumber,
+        subItems: []
+      };
+      sections.push(currentSection);
+      continue;
+    }
+
+    if (hasAgenda && currentSection) {
+      const h3Match = slide.match(/^###\s+(.+)$/m);
+      if (h3Match) {
+        const headerText = h3Match[1].trim();
+        if (headerText !== "!" && !headerText.startsWith("!")) {
+          currentSection.subItems.push({
+            text: headerText,
+            slideNumber: slideNumber
+          });
+        }
+      }
+    }
+  }
+
+  if (sections.length === 0) {
+    return markdown;
+  }
+
+  const totalLines = sections.reduce((count, section) => {
+    return count + 1 + section.subItems.length;
+  }, 0);
+
+  let columnCount = 1;
+  if (totalLines > 48) {
+    columnCount = 3;
+  } else if (totalLines > 24) {
+    columnCount = 2;
+  }
+
+  let agendaSlide = `class: agenda-columns-${columnCount}\n\n### Agenda\n\n`;
+
+  if (columnCount > 1) {
+    const sectionsPerColumn = Math.ceil(sections.length / columnCount);
+
+    for (let col = 0; col < columnCount; col++) {
+      const startIdx = col * sectionsPerColumn;
+      const endIdx = Math.min((col + 1) * sectionsPerColumn, sections.length);
+      const columnSections = sections.slice(startIdx, endIdx);
+
+      if (col > 0) {
+        agendaSlide += "\n";
+      }
+      agendaSlide += ".agenda-column[\n<ol";
+
+      if (col > 0 && startIdx > 0) {
+        agendaSlide += ` start="${startIdx + 1}"`;
+      }
+      agendaSlide += ">\n";
+
+      columnSections.forEach((section) => {
+        agendaSlide += `<li><a href="#${section.slideNumber}">${section.text}</a>`;
+        if (section.subItems.length > 0) {
+          agendaSlide += "\n<ul>\n";
+          section.subItems.forEach((item) => {
+            agendaSlide += `<li><a href="#${item.slideNumber}">${item.text}</a></li>\n`;
+          });
+          agendaSlide += "</ul>\n";
+        }
+        agendaSlide += "</li>\n";
+      });
+
+      agendaSlide += "</ol>\n]";
+    }
+  } else {
+    agendaSlide += "<ol>\n";
+    sections.forEach((section) => {
+      agendaSlide += `<li><a href="#${section.slideNumber}">${section.text}</a>`;
+      if (section.subItems.length > 0) {
+        agendaSlide += "\n<ul>\n";
+        section.subItems.forEach((item) => {
+          agendaSlide += `<li><a href="#${item.slideNumber}">${item.text}</a></li>\n`;
+        });
+        agendaSlide += "</ul>\n";
+      }
+      agendaSlide += "</li>\n";
+    });
+    agendaSlide += "</ol>";
+  }
+
+  slides.splice(2, 0, agendaSlide.trim());
+
+  return slides.join("\n---\n");
 }
 
 /**

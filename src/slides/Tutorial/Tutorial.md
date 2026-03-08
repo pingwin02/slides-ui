@@ -95,6 +95,37 @@ Date: !
 
 ---
 
+### Automatic agenda
+
+An agenda slide can be automatically generated as the second slide, listing section dividers and slide titles.
+
+The agenda is created from headers starting after the title slide (skipping the first content slide).
+
+**Important:** The control tag must be placed on the title slide.
+
+Control options:
+
+- **No tag** (default): agenda disabled
+- `<!-- agenda -->`: generates agenda with sections and slide titles
+- `<!-- agenda-sections -->`: generates agenda with sections only
+
+Where:
+
+- **Section dividers** (`##`) = main topic sections (numbered in agenda: 1, 2, 3...)
+- **Slide titles** (`###`) = individual slides within sections (shown as sub-items with indentation)
+
+```md
+# Course name
+
+## Topic
+
+Author
+
+<!-- agenda -->
+```
+
+---
+
 ### Subsequent slides
 
 Subsequent slides can have any content.

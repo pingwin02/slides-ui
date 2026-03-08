@@ -413,6 +413,25 @@ table {
   flex-direction: row-reverse;
 }
 
+[class*="agenda-columns-"] .slide-body-content {
+  display: flex;
+  gap: 3em;
+}
+
+[class*="agenda-columns-"] .agenda-column {
+  flex: 1;
+  min-width: 0;
+}
+
+[class*="agenda-columns-"] a {
+  color: inherit;
+  text-decoration: none;
+}
+
+[class*="agenda-columns-"] a:hover {
+  text-decoration: underline;
+}
+
 @page {
   size: 1210px 681px;
   margin: 0;
