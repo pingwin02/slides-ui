@@ -60,6 +60,12 @@ To print slides only for selected course use:
 npm run print -- [course_name]
 ```
 
+To print only selected slide or range of slides use:
+
+```bash
+npm run print -- [course_name] [slide_range]
+```
+
 Value for `course_name` should be the same as label in `Materials.md` list.
 
 ## License

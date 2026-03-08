@@ -12,11 +12,13 @@ trap "exit 1" SIGINT SIGTERM
 #   Base URL
 #   Output directory, must be inside the current directory
 #   Optional course full name, the same as the label used in the list.
+#   Optional slide number to print only that slide.
 #######################################
 function generate_pdf() {
     base_url="$1"
     output_dir="$2"
     selected_course_name="$3"
+    selected_slide_number="$4"
 
     url_pattern="s/.*(\([^)]*\))/\1/p" # Used to extract URL to course from markdown list.
     name_pattern="s/^\- \[\([^]]*\)\](.*)/\1/p" # Used to extract name of the course from markdown list.
@@ -60,12 +62,24 @@ function generate_pdf() {
         course_name="$(echo "${course}" | sed -n "${name_pattern}")"
         course_file="${output_dir}/${course_name}.${slides_extension}"
 
+        # Add slide number suffix if specific slide is selected
+        if [ -n "${selected_slide_number}" ]; then
+            course_file="${output_dir}/${course_name}_slide${selected_slide_number}.${slides_extension}"
+        fi
+
         # Check if the course matches the selected course name, if provided
         if [ -z "${selected_course_name}" ] || [ "${course_name}" = "${selected_course_name}" ]; then
             echo "Generating PDF for course: ${course_name}"
+            
+            # Add slide range parameter if specific slide is selected
+            decktape_args=("${chrome_args[@]}")
+            if [ -n "${selected_slide_number}" ]; then
+                echo "Printing only slide #${selected_slide_number}"
+                decktape_args+=(--slides "${selected_slide_number}")
+            fi
 
             npx decktape \
-                "${chrome_args[@]}" \
+                "${decktape_args[@]}" \
                 "${course_url}" \
                 "${course_file}"
             
@@ -82,6 +96,7 @@ function generate_pdf() {
 # Script main function. Generates PDF files from presentations rendered in HTML by remark.js.
 # Arguments:
 #   Optional course full name, the same as the label used in the list.
+#   Optional slide number to print only that slide.
 #######################################
 
 BASE_URL="http://localhost:3000"
@@ -93,7 +108,7 @@ function main() {
         exit 1
     fi
 
-    generate_pdf "${BASE_URL}" "dist" "$1"
+    generate_pdf "${BASE_URL}" "dist" "$1" "$2"
 }
 
 main "$@"

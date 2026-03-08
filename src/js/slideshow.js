@@ -62,6 +62,7 @@ $.when(slidesRequest, templateRequest).done(function (slide, template) {
       groupAutoImagesIntoRows();
       restructureImageLayoutSlides();
       fitAutoImagesToContent();
+      openLinksInNewTab();
     }
   );
 
@@ -79,6 +80,7 @@ $.when(slidesRequest, templateRequest).done(function (slide, template) {
   slideshow.on("afterShowSlide", prepareSlideTitles);
   slideshow.on("afterShowSlide", injectTitleSlideDate);
   slideshow.on("afterShowSlide", fitAutoImagesToContent);
+  $(window).on("resize", fitMermaidDiagramsToContent);
   $(window).on("resize", fitAutoImagesToContent);
 });
 
@@ -135,15 +137,67 @@ function renderMermaidDiagrams() {
         diagramText += this.innerText + "\n";
       });
     const mermaidDiagram = $('<div class="mermaid"></div>');
+    mermaidDiagram.attr("data-mermaid-source", diagramText);
     mermaidDiagram.text(diagramText);
     $(diagram).parent().replaceWith(mermaidDiagram);
   });
 
-  document.querySelectorAll(".mermaid").forEach((diagram) => {
+  const visibleDiagrams = Array.from(
+    document.querySelectorAll(".remark-visible .mermaid")
+  );
+
+  if (visibleDiagrams.length === 0) {
+    fitMermaidDiagramsToContent();
+    return;
+  }
+
+  const renderableDiagrams = visibleDiagrams.filter((diagram) => {
+    const source = (
+      diagram.getAttribute("data-mermaid-source") ||
+      diagram.textContent ||
+      ""
+    ).trim();
+
+    if (source.length === 0) {
+      return false;
+    }
+
+    diagram.setAttribute("data-mermaid-source", source);
+    return diagram.getAttribute("data-mermaid-rendered") !== "true";
+  });
+
+  if (renderableDiagrams.length === 0) {
+    fitMermaidDiagramsToContent();
+    return;
+  }
+
+  const markAsRendered = () => {
+    renderableDiagrams.forEach((diagram) => {
+      diagram.setAttribute("data-mermaid-rendered", "true");
+    });
+  };
+
+  if (typeof mermaid.run === "function") {
+    mermaid
+      .run({ nodes: renderableDiagrams })
+      .then(() => {
+        markAsRendered();
+        fitMermaidDiagramsToContent();
+      })
+      .catch(() => {
+        fitMermaidDiagramsToContent();
+      });
+    return;
+  }
+
+  renderableDiagrams.forEach((diagram) => {
     if (diagram.offsetWidth > 0) {
       mermaid.init(undefined, diagram);
+      diagram.setAttribute("data-mermaid-rendered", "true");
     }
   });
+
+  fitMermaidDiagramsToContent();
 }
 
 /**
@@ -642,7 +696,7 @@ function normalizeMarkdownFootnotes() {
     const notesList = document.createElement("ol");
     usedFootnotes.forEach((note) => {
       const item = document.createElement("li");
-      item.textContent = note.text;
+      appendCaptionTextWithLinks($(item), note.text);
       notesList.appendChild(item);
     });
 
@@ -771,7 +825,7 @@ function normalizeMarkdownImages() {
           return;
         }
 
-        if ($.trim(paragraph.text()).length > 0) {
+        if ((paragraph.text() || "").trim().length > 0) {
           return;
         }
 
@@ -846,8 +900,6 @@ function appendLinkNode(captionNode, label, href) {
   const link = document.createElement("a");
   link.href = href;
   link.textContent = label;
-  link.target = "_blank";
-  link.rel = "noopener noreferrer";
   captionNode.append(link);
 }
 
@@ -961,6 +1013,45 @@ function fitAutoImagesToContent() {
 }
 
 /**
+ * Fits Mermaid diagrams to free vertical space in a slide body,
+ * similar to how auto-generated markdown images are fitted.
+ */
+function fitMermaidDiagramsToContent() {
+  $(".slide-body-content").each(function () {
+    const bodyContent = this;
+    const diagrams = Array.from(bodyContent.children).filter((node) =>
+      node.matches(".mermaid")
+    );
+
+    if (diagrams.length === 0) {
+      return;
+    }
+
+    const safeContentHeight = Math.max(120, bodyContent.clientHeight);
+
+    const nonDiagramHeight = Array.from(bodyContent.children)
+      .filter((node) => !node.matches(".mermaid"))
+      .reduce((sum, node) => sum + getOuterHeightWithMargins(node), 0);
+
+    const availableForDiagrams = Math.max(
+      100,
+      safeContentHeight - nonDiagramHeight - 12
+    );
+    const perDiagramHeight = Math.max(
+      100,
+      Math.floor(availableForDiagrams / diagrams.length)
+    );
+
+    diagrams.forEach((diagram) => {
+      diagram.style.setProperty(
+        "--mermaid-max-height",
+        `${perDiagramHeight}px`
+      );
+    });
+  });
+}
+
+/**
  * Restructures slides with img-right or img-left class by wrapping
  * non-image content in .slide-text and image figures in .slide-img,
  * enabling side-by-side layout via CSS.
@@ -1033,4 +1124,20 @@ function getVerticalMargins(element) {
   const marginTop = parseFloat(styles.marginTop) || 0;
   const marginBottom = parseFloat(styles.marginBottom) || 0;
   return marginTop + marginBottom;
+}
+
+/**
+ * Makes all markdown-rendered links in slides open in a new tab.
+ */
+function openLinksInNewTab() {
+  document.querySelectorAll(".remark-slide-content a").forEach((link) => {
+    if (
+      !link.getAttribute("href") ||
+      link.getAttribute("href").startsWith("#")
+    ) {
+      return;
+    }
+    link.setAttribute("target", "_blank");
+    link.setAttribute("rel", "noopener noreferrer");
+  });
 }

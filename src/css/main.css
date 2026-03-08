@@ -348,6 +348,18 @@ table {
 
 .mermaid {
   margin: 1em auto;
+  max-width: 100%;
+  max-height: var(--mermaid-max-height, none);
+  overflow: hidden;
+}
+
+.mermaid svg {
+  display: block;
+  max-width: 100%;
+  max-height: var(--mermaid-max-height, none);
+  width: auto;
+  height: auto;
+  margin: 0 auto;
 }
 
 /* Image layout: text + image side by side */
@@ -378,7 +390,7 @@ table {
 
 .img-right .slide-body-content > .slide-img figure.auto-image,
 .img-left .slide-body-content > .slide-img figure.auto-image {
-  margin: 0;
+  margin-top: 1em;
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;

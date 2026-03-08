@@ -551,6 +551,36 @@ pie title Wild pets in my examples
 
 ---
 
+### Diagrams - timeline
+
+```mermaid
+timeline
+    title Wolf pack history
+    2020 : Pack founded
+         : First hunt
+    2021 : Territory expanded
+         : Fox alliance
+    2022 : New members joined
+    2023 : Pack migration
+         : New territory
+```
+
+````markdown
+```mermaid
+timeline
+    title Wolf pack history
+    2020 : Pack founded
+         : First hunt
+    2021 : Territory expanded
+         : Fox alliance
+    2022 : New members joined
+    2023 : Pack migration
+         : New territory
+```
+````
+
+---
+
 ### Source code
 
 The source code is placed in ` ``` ` specifying the language name.
