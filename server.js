@@ -99,7 +99,15 @@ const server = http
           response.end();
         }
       } else {
-        response.writeHead(200, { "Content-Type": contentType });
+        const headers = { "Content-Type": contentType };
+        // .md URLs return different content based on Accept header, so inform
+        // the browser the response varies and must not be reused across
+        // navigations (prevents raw markdown on browser Back).
+        if (extension === ".md") {
+          headers["Vary"] = "Accept";
+          headers["Cache-Control"] = "no-store";
+        }
+        response.writeHead(200, headers);
         response.end(content, "utf-8");
       }
     });

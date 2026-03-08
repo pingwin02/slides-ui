@@ -142,6 +142,7 @@
   align-items: flex-start;
   gap: 1.2rem;
   margin-left: -80px;
+  z-index: 3;
 }
 
 .remark-slide-container:nth-of-type(n + 2) .slide-header .logo--horizontal {
@@ -347,6 +348,57 @@ table {
 
 .mermaid {
   margin: 1em auto;
+}
+
+/* Image layout: text + image side by side */
+.img-right .slide-body-content,
+.img-left .slide-body-content {
+  display: flex !important;
+  gap: 1.5em;
+  height: 100%;
+  text-justify: none;
+}
+
+.img-right .slide-body-content > .slide-text,
+.img-left .slide-body-content > .slide-text {
+  flex: 1 1 50%;
+  min-width: 0;
+}
+
+.img-right .slide-body-content > .slide-img,
+.img-left .slide-body-content > .slide-img {
+  flex: 1 1 50%;
+  min-width: 0;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+}
+
+.img-right .slide-body-content > .slide-img figure.auto-image,
+.img-left .slide-body-content > .slide-img figure.auto-image {
+  margin: 0;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.img-right .slide-body-content > .slide-img figure.auto-image img,
+.img-left .slide-body-content > .slide-img figure.auto-image img {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  flex-shrink: 1;
+  min-height: 0;
+  margin: 0;
+}
+
+.img-left .slide-body-content {
+  flex-direction: row-reverse;
 }
 
 @page {

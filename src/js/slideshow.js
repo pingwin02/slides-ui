@@ -60,6 +60,7 @@ $.when(slidesRequest, templateRequest).done(function (slide, template) {
       normalizeMarkdownFootnotes();
       normalizeMarkdownImages();
       groupAutoImagesIntoRows();
+      restructureImageLayoutSlides();
       fitAutoImagesToContent();
     }
   );
@@ -259,9 +260,9 @@ function prepareSlideTitles() {
   const appendInheritedTitle = (slideNode, title) => {
     forEachGroupMember(slideNode, (memberNode) => {
       const memberContent = $(memberNode);
-      const inheritedHeading = $('<h3 class="slide-title-inherited"></h3>').text(
-        title
-      );
+      const inheritedHeading = $(
+        '<h3 class="slide-title-inherited"></h3>'
+      ).text(title);
       const header = memberContent.children(".slide-header");
       if (header.length > 0) {
         inheritedHeading.appendTo(header);
@@ -898,6 +899,15 @@ function fitAutoImagesToContent() {
       return;
     }
 
+    const slideContent = body.closest(".remark-slide-content");
+    if (
+      slideContent &&
+      (slideContent.classList.contains("img-right") ||
+        slideContent.classList.contains("img-left"))
+    ) {
+      return;
+    }
+
     const figures = bodyContent.querySelectorAll(AUTO_IMAGE_SELECTOR);
     if (figures.length === 0) {
       return;
@@ -947,6 +957,50 @@ function fitAutoImagesToContent() {
           applyFigureImageMaxHeight(figure, perContainerHeight)
         )
     );
+  });
+}
+
+/**
+ * Restructures slides with img-right or img-left class by wrapping
+ * non-image content in .slide-text and image figures in .slide-img,
+ * enabling side-by-side layout via CSS.
+ */
+function restructureImageLayoutSlides() {
+  $(".remark-slide-content").each(function () {
+    const slideContent = $(this);
+    if (
+      !slideContent.hasClass("img-right") &&
+      !slideContent.hasClass("img-left")
+    ) {
+      return;
+    }
+
+    const bodyContent = slideContent.find(".slide-body-content");
+    if (bodyContent.length === 0) {
+      return;
+    }
+
+    const children = bodyContent.children();
+    const textNodes = children.filter(function () {
+      return !$(this).is("figure.auto-image, .auto-image-row");
+    });
+    const imageNodes = children.filter(function () {
+      return $(this).is("figure.auto-image, .auto-image-row");
+    });
+
+    if (imageNodes.length === 0) {
+      return;
+    }
+
+    const textWrapper = $('<div class="slide-text"></div>');
+    const imgWrapper = $('<div class="slide-img"></div>');
+
+    textNodes.appendTo(textWrapper);
+    imageNodes.appendTo(imgWrapper);
+
+    bodyContent.empty();
+    textWrapper.appendTo(bodyContent);
+    imgWrapper.appendTo(bodyContent);
   });
 }
 

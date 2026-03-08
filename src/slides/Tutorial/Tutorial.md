@@ -664,6 +664,72 @@ The Fox.
 
 ---
 
+### Styling - image layout (right)
+
+Use `class: img-right` to place an image on the right side of the slide, with text on the left (50/50 split).
+
+The image automatically scales to fill available height.
+
+```md
+---
+
+class: img-right
+
+### Slide title
+
+- Some text content on the left side.
+- More bullet points here.
+
+![Caption](assets/img/fox.svg)
+```
+
+---
+
+class: img-right
+
+### Styling - image layout (right)
+
+- This is an example of `img-right` layout.
+- Text is on the left side.
+- Image is on the right side.
+- The split is 50/50.
+
+![Fox](assets/img/fox.svg)
+
+---
+
+### Styling - image layout (left)
+
+Use `class: img-left` to place an image on the left side, with text on the right.
+
+```md
+---
+
+class: img-left
+
+### Slide title
+
+- Some text content on the right side.
+- More bullet points here.
+
+![Caption](assets/img/fox.svg)
+```
+
+---
+
+class: img-left
+
+### Styling - image layout (left)
+
+- This is an example of `img-left` layout.
+- Text is on the right side.
+- Image is on the left side.
+- The split is 50/50.
+
+![Fox](assets/img/fox.svg)
+
+---
+
 ### Instructions
 
 Firstly, clone this repository:
