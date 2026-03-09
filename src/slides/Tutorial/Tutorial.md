@@ -791,39 +791,6 @@ class: img-left
 
 ---
 
-### Styling - image layout (top)
-
-Use `class: img-top` to place an image on top of the slide, with text below.
-
-By default (without any `img-*` class), images are placed at the bottom. Use `img-top` to reverse this.
-
-```md
----
-
-class: img-top
-
-### Slide title
-
-- Some text content below the image.
-- More bullet points here.
-
-![Caption](assets/img/fox.svg)
-```
-
----
-
-class: img-top
-
-### Styling - image layout (top)
-
-- This is an example of `img-top` layout.
-- Image is on top.
-- Text is below.
-
-![Fox](assets/img/fox.svg)
-
----
-
 ### Instructions
 
 Firstly, clone this repository:

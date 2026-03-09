@@ -64,7 +64,6 @@ $.when(slidesRequest, templateRequest).done(function (slide, template) {
       groupAutoImagesIntoRows();
       restructureImageLayoutSlides();
       fitAutoImagesToContent();
-      reorderImgTopSlides();
       openLinksInNewTab();
     }
   );
@@ -83,10 +82,8 @@ $.when(slidesRequest, templateRequest).done(function (slide, template) {
   slideshow.on("afterShowSlide", prepareSlideTitles);
   slideshow.on("afterShowSlide", injectTitleSlideDate);
   slideshow.on("afterShowSlide", fitAutoImagesToContent);
-  slideshow.on("afterShowSlide", reorderImgTopSlides);
   $(window).on("resize", fitMermaidDiagramsToContent);
   $(window).on("resize", fitAutoImagesToContent);
-  $(window).on("resize", reorderImgTopSlides);
 });
 
 /**
@@ -1190,30 +1187,6 @@ function fitMermaidDiagramsToContent() {
         `${perDiagramHeight}px`
       );
     });
-  });
-}
-
-/**
- * Reorders children in img-top slides so that image figures appear before text content.
- * Runs after fitAutoImagesToContent so images are already sized correctly.
- */
-function reorderImgTopSlides() {
-  $(".remark-slide-content.img-top").each(function () {
-    const bodyContent = $(this).find(".slide-body-content");
-    if (bodyContent.length === 0) {
-      return;
-    }
-
-    const children = bodyContent.children();
-    const imageNodes = children.filter(function () {
-      return $(this).is("figure.auto-image, .auto-image-row");
-    });
-
-    if (imageNodes.length === 0) {
-      return;
-    }
-
-    imageNodes.prependTo(bodyContent);
   });
 }
 
