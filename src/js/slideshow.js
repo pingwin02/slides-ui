@@ -566,15 +566,17 @@ function prepareSlideTitles() {
     const runLength = runEnd - runStart;
     if (runTitle.length > 0 && runLength > 1) {
       for (let index = runStart; index < runEnd; index += 1) {
+        const appendix = ` (${index - runStart + 1}/${runLength})`;
+        const numberedTitle = runTitle + appendix;
+        setDataTitle(slides[index], numberedTitle);
         forEachGroupMember(slides[index], (memberNode) => {
           const titleNode = getTitleNode($(memberNode));
           if (titleNode.length === 0) {
             return;
           }
-
           const counter = document.createElement("span");
           counter.className = "slide-title-counter";
-          counter.textContent = ` (${index - runStart + 1}/${runLength})`;
+          counter.textContent = appendix;
           titleNode.append(counter);
         });
       }
