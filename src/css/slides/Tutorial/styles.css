@@ -1,3 +1,14 @@
+[data-title="Diagrams - flowchart"] div.mermaid,
+[data-title="Diagrams - sequence"] div.mermaid,
+[data-title="Diagrams - class"] div.mermaid,
+[data-title="Diagrams - state"] div.mermaid,
+[data-title="Diagrams - ERD"] div.mermaid {
+  float: left;
+  width: 35%;
+  margin-right: 5%;
+  --mermaid-max-height: 100% !important;
+}
+
 /* For two or more columns use outer list as flex container. */
 [data-title="Styling - two columns list"] p + ul {
   display: flex;
