@@ -60,6 +60,12 @@ For PDF printing use:
 npm run print
 ```
 
+To use a custom port (must match the running server):
+
+```bash
+npm run print -- --port [port_number]
+```
+
 To print slides only for selected course use:
 
 ```bash
@@ -70,6 +76,12 @@ To print only selected slide or range of slides use:
 
 ```bash
 npm run print -- [course_name] [slide_range]
+```
+
+Both options can be combined:
+
+```bash
+npm run print -- [course_name] [slide_range] --port [port_number]
 ```
 
 Value for `course_name` should be the same as label in `Materials.md` list.

@@ -337,6 +337,9 @@ table tr:nth-child(even) {
 table thead th {
   background: #ededed;
   vertical-align: center;
+}
+
+th, td {
   padding: 0.5em;
 }
 
@@ -369,7 +372,7 @@ table {
   display: flex !important;
   gap: 1.5em;
   height: 100%;
-  text-justify: none;
+  text-justify: auto;
 }
 
 .img-right .slide-body-content > .slide-text,

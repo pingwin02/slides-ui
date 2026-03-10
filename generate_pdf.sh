@@ -95,20 +95,39 @@ function generate_pdf() {
 #######################################
 # Script main function. Generates PDF files from presentations rendered in HTML by remark.js.
 # Arguments:
+#   --port: Optional port number (default: 3000).
 #   Optional course full name, the same as the label used in the list.
 #   Optional slide number to print only that slide.
 #######################################
 
-BASE_URL="http://localhost:3000"
+DEFAULT_PORT=3000
 
 function main() {
-    curl -s --head "${BASE_URL}" | head -n 1 | grep "200 OK" > /dev/null
+    local port="${DEFAULT_PORT}"
+    local args=()
+
+    while [ $# -gt 0 ]; do
+        case "$1" in
+            --port)
+                port="$2"
+                shift 2
+                ;;
+            *)
+                args+=("$1")
+                shift
+                ;;
+        esac
+    done
+
+    local base_url="http://localhost:${port}"
+
+    curl -s --head "${base_url}" | head -n 1 | grep "200 OK" > /dev/null
     if [ $? -ne 0 ]; then
-        echo "Error: ${BASE_URL} is not running. Please start the server (npm run serve) before generating PDFs."
+        echo "Error: ${base_url} is not running. Please start the server (npm run serve) before generating PDFs."
         exit 1
     fi
 
-    generate_pdf "${BASE_URL}" "dist" "$1" "$2"
+    generate_pdf "${base_url}" "dist" "${args[0]}" "${args[1]}"
 }
 
 main "$@"
