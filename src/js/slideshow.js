@@ -6,7 +6,7 @@ const BODY_EXCLUDED_SELECTOR =
 const AUTO_IMAGE_SELECTOR = "figure.auto-image";
 const AUTO_IMAGE_ROW_SELECTOR = ".auto-image-row";
 
-let slides = window.location.pathname;
+const slides = window.location.pathname;
 
 if (slides === "/") {
   window.location.replace("/slides/Materials.md");
@@ -15,7 +15,7 @@ if (slides === "/") {
 appendCustomSlides(slides);
 
 // Fetch markdown slides.
-let slidesRequest = $.ajax({
+const slidesRequest = $.ajax({
   url: slides,
   type: "GET",
   headers: {
@@ -23,12 +23,14 @@ let slidesRequest = $.ajax({
   }
 }).fail(function () {
   alert(
-    "Markdown file not found. Please check if the file exists and the path is correct."
+    "Markdown file not found. " +
+      "Please check if the file exists " +
+      "and the path is correct."
   );
 });
 
 // Fetch slides template.
-let templateRequest = $.ajax({
+const templateRequest = $.ajax({
   url: "/md/template.md",
   type: "GET",
   headers: {
@@ -41,7 +43,12 @@ $.when(slidesRequest, templateRequest).done(function (slide, template) {
   let md =
     template[0] +
     slide[0] +
-    '\n\n---\nlayout: false\nclass: end-slide\n\n<div class="end-slide-logo-wrapper">\n    <img class="end-slide-logo" alt="PG Logo" src="/img/pg_logo_white.svg"/>\n</div>\n';
+    "\n\n---\nlayout: false\nclass: end-slide\n\n" +
+    "<div class=\"end-slide-logo-wrapper\">\n" +
+    "<img class=\"end-slide-logo\" " +
+    "alt=\"PG Logo\" " +
+    "src=\"/img/pg_logo_white.svg\"/>\n" +
+    "</div>\n";
   md = md.replace(/\r\n/g, "\n");
 
   md = generateAgenda(md);
@@ -75,9 +82,11 @@ $.when(slidesRequest, templateRequest).done(function (slide, template) {
     theme: "neutral"
   });
 
-  renderMermaidDiagrams(); // Render mermaid diagram when displaying slide (e.g.: by direct link).
+  // Render mermaid diagram when displaying slide.
+  renderMermaidDiagrams();
   renderMathFormulas();
-  slideshow.on("afterShowSlide", renderMermaidDiagrams); // Render mermaid diagram when navigating to next slide.
+  // Render mermaid diagram when navigating.
+  slideshow.on("afterShowSlide", renderMermaidDiagrams);
   slideshow.on("afterShowSlide", renderMathFormulas);
   slideshow.on("afterShowSlide", prepareSlideTitles);
   slideshow.on("afterShowSlide", injectTitleSlideDate);
@@ -229,11 +238,13 @@ function generateAgenda(markdown) {
       agendaSlide += ">\n";
 
       columnSections.forEach((section) => {
-        agendaSlide += `<li><a href="#${section.slideNumber}">${section.text}</a>`;
+        agendaSlide +=
+          `<li><a href="#${section.slideNumber}">` + `${section.text}</a>`;
         if (section.subItems.length > 0) {
           agendaSlide += "\n<ul>\n";
           section.subItems.forEach((item) => {
-            agendaSlide += `<li><a href="#${item.slideNumber}">${item.text}</a></li>\n`;
+            agendaSlide +=
+              `<li><a href="#${item.slideNumber}">` + `${item.text}</a></li>\n`;
           });
           agendaSlide += "</ul>\n";
         }
@@ -245,11 +256,13 @@ function generateAgenda(markdown) {
   } else {
     agendaSlide += "<ol>\n";
     sections.forEach((section) => {
-      agendaSlide += `<li><a href="#${section.slideNumber}">${section.text}</a>`;
+      agendaSlide +=
+        `<li><a href="#${section.slideNumber}">` + `${section.text}</a>`;
       if (section.subItems.length > 0) {
         agendaSlide += "\n<ul>\n";
         section.subItems.forEach((item) => {
-          agendaSlide += `<li><a href="#${item.slideNumber}">${item.text}</a></li>\n`;
+          agendaSlide +=
+            `<li><a href="#${item.slideNumber}">` + `${item.text}</a></li>\n`;
         });
         agendaSlide += "</ul>\n";
       }
@@ -264,8 +277,11 @@ function generateAgenda(markdown) {
 }
 
 /**
- * Iterates through all pre elements containing element with mermaid class and replaces them with div elements with
- * mermaid class. Then for each div with mermaid class calls mermaid library init method to render diagram.
+ * Iterates through all pre elements containing
+ * element with mermaid class and replaces them with
+ * div elements with mermaid class. Then for each div
+ * with mermaid class calls mermaid library init method
+ * to render diagram.
  */
 function renderMermaidDiagrams() {
   document.querySelectorAll("pre > .mermaid").forEach((diagram) => {
@@ -275,7 +291,7 @@ function renderMermaidDiagrams() {
       .each(function () {
         diagramText += this.innerText + "\n";
       });
-    const mermaidDiagram = $('<div class="mermaid"></div>');
+    const mermaidDiagram = $("<div class=\"mermaid\"></div>");
     mermaidDiagram.attr("data-mermaid-source", diagramText);
     mermaidDiagram.text(diagramText);
     $(diagram).parent().replaceWith(mermaidDiagram);
@@ -454,7 +470,7 @@ function prepareSlideTitles() {
     forEachGroupMember(slideNode, (memberNode) => {
       const memberContent = $(memberNode);
       const inheritedHeading = $(
-        '<h3 class="slide-title-inherited"></h3>'
+        "<h3 class=\"slide-title-inherited\"></h3>"
       ).text(title);
       const header = memberContent.children(".slide-header");
       if (header.length > 0) {
@@ -635,7 +651,7 @@ function injectTitleSlideDate() {
   let dateNode = titleSlide.children("p.slide-title-date").first();
 
   if (dateNode.length === 0) {
-    dateNode = $('<p class="slide-title-date"></p>');
+    dateNode = $("<p class=\"slide-title-date\"></p>");
     titleSlide.append(dateNode);
   }
 
@@ -693,7 +709,8 @@ function extractTitleDateOverride(bodyContent) {
 }
 
 /**
- * Converts a slide containing only markdown H2 content into a section divider slide.
+ * Converts a slide containing only markdown H2
+ * content into a section divider slide.
  */
 function normalizeSectionSlides() {
   $(".remark-slide-content").each(function () {
@@ -724,7 +741,7 @@ function normalizeSectionSlides() {
     const onlyContentNode = contentNodes.first();
 
     if (onlyContentNode.is("h2")) {
-      const section = $('<div class="section"></div>');
+      const section = $("<div class=\"section\"></div>");
       onlyContentNode.replaceWith(section);
       onlyContentNode.appendTo(section);
     }
@@ -739,7 +756,8 @@ function normalizeSectionSlides() {
 }
 
 /**
- * Wraps slide body content into dedicated container, excluding logo, headings and slide number.
+ * Wraps slide body content into dedicated container,
+ * excluding logo, headings and slide number.
  */
 function wrapSlideBody() {
   $(".remark-slide-content").each(function () {
@@ -753,7 +771,7 @@ function wrapSlideBody() {
     }
 
     if (slideContent.children(".slide-header").length === 0) {
-      const header = $('<div class="slide-header"></div>');
+      const header = $("<div class=\"slide-header\"></div>");
       const headerNodes = slideContent.children().filter(function () {
         const node = $(this);
         return (
@@ -772,7 +790,7 @@ function wrapSlideBody() {
       return;
     }
 
-    const body = $('<div class="slide-body"></div>');
+    const body = $("<div class=\"slide-body\"></div>");
     const bodyNodes = slideContent.children().filter(function () {
       return !$(this).is(BODY_EXCLUDED_SELECTOR);
     });
@@ -781,7 +799,7 @@ function wrapSlideBody() {
       return;
     }
 
-    const bodyContent = $('<div class="slide-body-content"></div>');
+    const bodyContent = $("<div class=\"slide-body-content\"></div>");
     bodyNodes.appendTo(bodyContent);
     bodyContent.appendTo(body);
     body.appendTo(slideContent);
@@ -806,7 +824,9 @@ function ensureSlideStructureOrder() {
 }
 
 /**
- * Converts markdown-like footnotes ([^id] and [^id]: text) into rendered footnote references and a notes block.
+ * Converts markdown-like footnotes ([^id] and
+ * [^id]: text) into rendered footnote references
+ * and a notes block.
  */
 function normalizeMarkdownFootnotes() {
   $(".slide-body").each(function () {
@@ -952,7 +972,9 @@ function replaceFootnoteReferences(container, definitions) {
 }
 
 /**
- * Converts standalone markdown images into figure elements with optional figcaption generated from alt text.
+ * Converts standalone markdown images into figure
+ * elements with optional figcaption generated from
+ * alt text.
  */
 function normalizeMarkdownImages() {
   $(".slide-body-content").each(function () {
@@ -970,7 +992,7 @@ function normalizeMarkdownImages() {
           return;
         }
 
-        const figure = $('<figure class="auto-image"></figure>');
+        const figure = $("<figure class=\"auto-image\"></figure>");
         const caption = (image.attr("alt") || "").trim();
 
         image.appendTo(figure);
@@ -1081,8 +1103,9 @@ function groupAutoImagesIntoRows() {
 }
 
 /**
- * Fits auto-generated markdown images to free vertical space in a slide body, so they don't overlap heading area
- * and shrink when additional text is present.
+ * Fits auto-generated markdown images to free vertical
+ * space in a slide body, so they don't overlap heading
+ * area and shrink when additional text is present.
  */
 function fitAutoImagesToContent() {
   $(".slide-body-content").each(function () {
@@ -1224,8 +1247,8 @@ function restructureImageLayoutSlides() {
       return;
     }
 
-    const textWrapper = $('<div class="slide-text"></div>');
-    const imgWrapper = $('<div class="slide-img"></div>');
+    const textWrapper = $("<div class=\"slide-text\"></div>");
+    const imgWrapper = $("<div class=\"slide-img\"></div>");
 
     textNodes.appendTo(textWrapper);
     imageNodes.appendTo(imgWrapper);

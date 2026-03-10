@@ -1,28 +1,29 @@
-let process = require("node:process");
-let http = require("http");
-let fs = require("fs");
-let path = require("path");
-let WebSocket = require("ws");
+const process = require("node:process");
+const http = require("http");
+const fs = require("fs");
+const path = require("path");
+const WebSocket = require("ws");
 
 // Support CTRL+C for terminating HTTP server.
 process.on("SIGINT", () => {
-  console.info("Interrupted");
+  console.warn("Interrupted");
   process.exit(0);
 });
 
 // Port can be passed as the first argument (e.g. `node server.js 8080`).
-let port = parseInt(process.argv[2]) || 3000;
-let srcDir = "./src";
+const port = parseInt(process.argv[2]) || 3000;
+const srcDir = "./src";
 
 // Create HTTP server.
 const server = http
   .createServer(function (request, response) {
-    let url = decodeURI(request.url);
+    const url = decodeURI(request.url);
 
     // Requests are made relatively to source directory.
     let filePath = srcDir + url;
 
-    // If request points to slides directory, forward to default materials markdown file.
+    // If request points to slides directory,
+    // forward to default materials markdown file.
     if (filePath === srcDir + "/slides" || filePath === srcDir + "/slides/") {
       response.writeHead(301, { Location: "/" });
       response.end();
@@ -35,39 +36,41 @@ const server = http
     }
 
     // Check extension of requested resource.
-    let extension = path.extname(filePath);
+    const extension = path.extname(filePath);
 
     // Get accept header from the request.
-    let accept = request.headers.accept || "";
+    const accept = request.headers.accept || "";
 
     let contentType;
 
     // Assign response content type based on requested resource extension.
     switch (extension) {
-      case ".js":
-        contentType = "text/javascript";
-        break;
-      case ".css":
-        contentType = "text/css";
-        break;
-      case ".png":
-        contentType = "image/png";
-        break;
-      case ".svg":
-        contentType = "image/svg+xml";
-        break;
-      case ".jpg":
-        contentType = "image/jpg";
-        break;
-      case ".md":
-        contentType = "text/markdown; charset=utf-8";
-        break;
-      default:
-        contentType = "text/html";
+    case ".js":
+      contentType = "text/javascript";
+      break;
+    case ".css":
+      contentType = "text/css";
+      break;
+    case ".png":
+      contentType = "image/png";
+      break;
+    case ".svg":
+      contentType = "image/svg+xml";
+      break;
+    case ".jpg":
+      contentType = "image/jpg";
+      break;
+    case ".md":
+      contentType = "text/markdown; charset=utf-8";
+      break;
+    default:
+      contentType = "text/html";
     }
 
-    // If markdown resource was requested but accept was not set to text/markdown, forward to index.html where requested
-    // markdown resource will be rendered as slides.
+    // If markdown resource was requested but accept was
+    // not set to text/markdown, forward to index.html
+    // where requested markdown resource will be rendered
+    // as slides.
     if (extension === ".md" && !accept.includes("text/markdown")) {
       filePath = srcDir + "/index.html";
       contentType = "text/html";
@@ -76,7 +79,7 @@ const server = http
     // Read requested resource and write it to HTTP response.
     fs.readFile(filePath, function (error, content) {
       if (error) {
-        console.log(error);
+        console.error(error);
         if (error.code === "ENOENT") {
           response.writeHead(404);
           response.end();
@@ -100,8 +103,8 @@ const server = http
   })
   .listen(port, "0.0.0.0");
 
-console.log(`Server running at http://127.0.0.1:${port}/`);
-console.log("To stop use: CTRL+C");
+console.warn(`Server running at http://127.0.0.1:${port}/`);
+console.warn("To stop use: CTRL+C");
 
 import("open")
   .then((open) => open.default(`http://127.0.0.1:${port}/`))
@@ -125,7 +128,7 @@ fs.watch(srcDir, { recursive: true }, (eventType, filename) => {
     clearTimeout(reloadTimeout);
 
     reloadTimeout = setTimeout(() => {
-      console.log(`File changed: ${filename}`);
+      console.warn(`File changed: ${filename}`);
       broadcastReload();
     }, DEBOUNCE_DELAY);
   }
