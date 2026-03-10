@@ -10,23 +10,9 @@ process.on("SIGINT", () => {
   process.exit(0);
 });
 
-// CMD arguments.
-const portIndex = process.argv.indexOf("--port");
-const srcDirIndex = process.argv.indexOf("--src");
-
-// Default values for CMD arguments.
-let port = 3000;
+// Port can be passed as the first argument (e.g. `node server.js 8080`).
+let port = parseInt(process.argv[2]) || 3000;
 let srcDir = "./src";
-
-// Check CMD arguments.
-if (portIndex !== -1 && process.argv.length > portIndex + 1) {
-  port = parseInt(process.argv[portIndex + 1]);
-}
-
-// Check CMD arguments.
-if (srcDirIndex !== -1 && process.argv.length > srcDirIndex + 1) {
-  srcDir = process.argv[srcDirIndex + 1];
-}
 
 // Create HTTP server.
 const server = http

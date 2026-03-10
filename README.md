@@ -44,6 +44,12 @@ In order to start a server use:
 npm run serve
 ```
 
+Optional port number can be provided as an argument:
+
+```bash
+npm run serve -- [port_number]
+```
+
 To stop server, use `CTRL` + `C`.
 
 ## PDF printing
