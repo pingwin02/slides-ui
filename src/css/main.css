@@ -339,7 +339,8 @@ table thead th {
   vertical-align: center;
 }
 
-th, td {
+th,
+td {
   padding: 0.5em;
 }
 
