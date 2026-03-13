@@ -3,47 +3,35 @@ const http = require("http");
 const fs = require("fs");
 const path = require("path");
 const WebSocket = require("ws");
+const { exec } = require("child_process");
 
-// Support CTRL+C for terminating HTTP server.
 process.on("SIGINT", () => {
   console.warn("Interrupted");
   process.exit(0);
 });
 
-// Port can be passed as the first argument (e.g. `node server.js 8080`).
 const port = parseInt(process.argv[2]) || 3000;
 const srcDir = "./src";
 
-// Create HTTP server.
 const server = http
   .createServer(function (request, response) {
     const url = decodeURI(request.url);
-
-    // Requests are made relatively to source directory.
     let filePath = srcDir + url;
 
-    // If request points to slides directory,
-    // forward to default materials markdown file.
     if (filePath === srcDir + "/slides" || filePath === srcDir + "/slides/") {
       response.writeHead(301, { Location: "/" });
       response.end();
       return;
     }
 
-    // If requests is made to root, forward to index.html.
     if (filePath === srcDir + "/") {
       filePath += "index.html";
     }
 
-    // Check extension of requested resource.
     const extension = path.extname(filePath);
-
-    // Get accept header from the request.
     const accept = request.headers.accept || "";
-
     let contentType;
 
-    // Assign response content type based on requested resource extension.
     switch (extension) {
     case ".js":
       contentType = "text/javascript";
@@ -67,16 +55,11 @@ const server = http
       contentType = "text/html";
     }
 
-    // If markdown resource was requested but accept was
-    // not set to text/markdown, forward to index.html
-    // where requested markdown resource will be rendered
-    // as slides.
     if (extension === ".md" && !accept.includes("text/markdown")) {
       filePath = srcDir + "/index.html";
       contentType = "text/html";
     }
 
-    // Read requested resource and write it to HTTP response.
     fs.readFile(filePath, function (error, content) {
       if (error) {
         console.error(error);
@@ -89,9 +72,6 @@ const server = http
         }
       } else {
         const headers = { "Content-Type": contentType };
-        // .md URLs return different content based on Accept header, so inform
-        // the browser the response varies and must not be reused across
-        // navigations (prevents raw markdown on browser Back).
         if (extension === ".md") {
           headers["Vary"] = "Accept";
           headers["Cache-Control"] = "no-store";
@@ -129,7 +109,17 @@ fs.watch(srcDir, { recursive: true }, (eventType, filename) => {
 
     reloadTimeout = setTimeout(() => {
       console.warn(`File changed: ${filename}`);
-      broadcastReload();
+
+      if (filename.includes("slides") && !filename.includes("Materials.md")) {
+        exec("bash utils/scan.sh", (error) => {
+          if (error) {
+            console.error(`Error running scan.sh: ${error}`);
+          }
+          broadcastReload();
+        });
+      } else {
+        broadcastReload();
+      }
     }, DEBOUNCE_DELAY);
   }
 });

@@ -13,10 +13,12 @@
   },
   "license": "MIT",
   "scripts": {
-    "init": "bash create.sh",
-    "delete": "bash create.sh --delete",
-    "serve": "bash scan.sh && node server.js",
-    "print": "bash generate_pdf.sh",
+    "init": "bash utils/create.sh",
+    "delete": "bash utils/create.sh --delete",
+    "serve": "bash utils/scan.sh && node server.js",
+    "print": "bash utils/generate_pdf.sh",
+    "backup": "bash utils/backup.sh",
+    "restore": "bash utils/restore.sh",
     "lint": "eslint . --fix",
     "prelint": "prettier . --write"
   },

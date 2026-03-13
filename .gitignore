@@ -18,6 +18,8 @@ package-lock.json
 ### Angular ###
 .angular/
 
+backups/
+
 src/slides/*
 src/css/slides/*
 

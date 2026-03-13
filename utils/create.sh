@@ -37,6 +37,7 @@ fi
 
 CSS_DIR="src/css/slides/$COURSE_NAME"
 SLIDES_DIR="src/slides/$COURSE_NAME"
+PDF_FILE="dist/${COURSE_NAME}.pdf"
 MARKDOWN_FILE="$SLIDES_DIR/$COURSE_NAME.md"
 
 if [ "$DELETE_MODE" = true ]; then
@@ -51,6 +52,10 @@ if [ "$DELETE_MODE" = true ]; then
 
     if [ -d "$SLIDES_DIR" ]; then
         rm -rf "$SLIDES_DIR"
+    fi
+
+    if [ -f "$PDF_FILE" ]; then
+        rm -f "$PDF_FILE"
     fi
 
     echo "Files and directories for '$COURSE_NAME' have been removed."

@@ -13,6 +13,8 @@ The list of tools required to run the project:
 
 - npm
 - Node
+- zip (for backups)
+- unzip (for restoring backups)
 
 run:
 
@@ -85,6 +87,28 @@ npm run print -- [course_name] [slide_range] --port [port_number]
 ```
 
 Value for `course_name` should be the same as label in `Materials.md` list.
+
+## Backup and Restore
+
+To create a backup of a specific course, run:
+
+```bash
+npm run backup -- [course_name]
+```
+
+To create a backup of all courses, use:
+
+```bash
+npm run backup -- all
+```
+
+Backups are saved as ZIP archives in the `backups` directory.
+
+To restore a backup from a ZIP archive, run:
+
+```bash
+npm run restore -- [path_to_zip_file]
+```
 
 ## License
 
