@@ -1304,8 +1304,8 @@ function openLinksInNewTab() {
 }
 
 /**
- * Eliminates hanging single and double letters
- * (e.g., w, z, a, i, do, na, od)
+ * Eliminates hanging single-letter words
+ * (e.g., w, z, a, i)
  * and single-digit numbers by replacing the following
  * regular space with a non-breaking space.
  */
@@ -1333,8 +1333,8 @@ function fixHangingShortWords() {
       nodesToModify.push(currentNode);
     }
 
-    // Match 1-2 letter words or single-digit numbers at word boundaries
-    const regex = /(^|[\s(>"'])([a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ]{1,2}|\d)[ \n\r\t]+/g;
+    // Match single-letter words or single-digit numbers at word boundaries
+    const regex = /(^|[\s(>"'])([a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ]|\d)[ \n\r\t]+/g;
 
     nodesToModify.forEach((textNode) => {
       const text = textNode.nodeValue;
