@@ -140,7 +140,7 @@ Subsequent slides can have any content.
 
 ### Automatic section title and counter
 
-If the next slide does not provide its own `###` title, it inherits the last `###` title.
+If the next slide does not provide its own `###` title, it inherits the last `###` title or `##` section title.
 
 You can force a slide without title using `### !`.
 

@@ -510,13 +510,13 @@ function prepareSlideTitles() {
       slideContent.find(".slide-body-content > .section > h2").length > 0;
     if (isSectionDivider) {
       setNoTitleOverride(slideNode, false);
-      activeSectionTitle = "";
       const sectionTitle = (
         slideContent
           .find(".slide-body-content > .section > h2")
           .first()
           .text() || ""
       ).trim();
+      activeSectionTitle = sectionTitle;
       setDataTitle(slideNode, sectionTitle);
       return;
     }
