@@ -420,12 +420,17 @@ table {
 
 [class*="agenda-columns-"] .slide-body-content {
   display: flex;
-  gap: 3em;
+  gap: 2em;
+  align-items: flex-start;
 }
 
 [class*="agenda-columns-"] .agenda-column {
   flex: 1;
   min-width: 0;
+}
+
+[class*="agenda-columns-"] .agenda-column li {
+  break-inside: avoid;
 }
 
 [class*="agenda-columns-"] a {
@@ -435,6 +440,14 @@ table {
 
 [class*="agenda-columns-"] a:hover {
   text-decoration: underline;
+}
+
+[class*="agenda-columns-"] .slide-body {
+  justify-content: flex-start;
+}
+
+[class*="agenda-columns-"] .slide-header {
+  pointer-events: none;
 }
 
 @page {

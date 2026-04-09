@@ -4,6 +4,8 @@
 
 Michał Wójcik
 
+<!-- agenda -->
+
 ---
 
 ### Motivation
@@ -209,10 +211,6 @@ Section divider can be created with markdown `##`.
 ## Section title
 ---
 ```
-
----
-
-## Section title
 
 ---
 

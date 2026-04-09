@@ -15,13 +15,31 @@ const srcDir = "./src";
 
 const server = http
   .createServer(function (request, response) {
-    const url = decodeURI(request.url);
+    const requestUrl = new URL(request.url, `http://127.0.0.1:${port}`);
+    const url = decodeURI(requestUrl.pathname);
     let filePath = srcDir + url;
 
     if (filePath === srcDir + "/slides" || filePath === srcDir + "/slides/") {
       response.writeHead(301, { Location: "/" });
       response.end();
       return;
+    }
+
+    try {
+      if (fs.statSync(filePath).isDirectory()) {
+        const directoryName = path.basename(path.resolve(filePath));
+        const defaultMarkdown = path.join(filePath, `${directoryName}.md`);
+
+        if (fs.existsSync(defaultMarkdown)) {
+          response.writeHead(302, {
+            Location: `${url.replace(/\/?$/, "/")}${directoryName}.md#1`
+          });
+          response.end();
+          return;
+        }
+      }
+    } catch {
+      // Fall through to normal file handling.
     }
 
     if (filePath === srcDir + "/") {
