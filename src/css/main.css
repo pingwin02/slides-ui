@@ -418,10 +418,13 @@ table {
   flex-direction: row-reverse;
 }
 
-[class*="agenda-columns-"] .slide-body-content {
+.remark-slide-container:nth-of-type(n + 2)
+  .remark-slide-content[class*="agenda-columns-"]
+  .slide-body-content {
   display: flex;
   gap: 2em;
   align-items: flex-start;
+  text-align: left;
 }
 
 [class*="agenda-columns-"] .agenda-column {
@@ -448,6 +451,13 @@ table {
 
 [class*="agenda-columns-"] .slide-header {
   pointer-events: none;
+}
+
+a.agenda-slide-anchor {
+  display: block;
+  width: 0;
+  height: 0;
+  overflow: hidden;
 }
 
 @page {

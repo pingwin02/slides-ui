@@ -43,13 +43,13 @@ npm run delete -- [course_name]
 In order to start a server use:
 
 ```bash
-npm run serve
+npm start
 ```
 
 Optional port number can be provided as an argument:
 
 ```bash
-npm run serve -- [port_number]
+npm start -- [port_number]
 ```
 
 To stop server, use `CTRL` + `C`.

@@ -118,12 +118,14 @@ function generateAgenda(markdown) {
 
       columnEntries.forEach((section) => {
         agendaSlide +=
-          `<li><a href="#${section.slideNumber}">` + `${section.text}</a>`;
+          `<li><a href="#slide-${section.slideNumber}">` +
+          `${section.text}</a>`;
         if (section.subItems.length > 0) {
           agendaSlide += "\n<ul>\n";
           section.subItems.forEach((item) => {
             agendaSlide +=
-              `<li><a href="#${item.slideNumber}">` + `${item.text}</a></li>\n`;
+              `<li><a href="#slide-${item.slideNumber}">` +
+              `${item.text}</a></li>\n`;
           });
           agendaSlide += "</ul>\n";
         }
@@ -136,12 +138,13 @@ function generateAgenda(markdown) {
     agendaSlide += "<ol>\n";
     entries.forEach((section) => {
       agendaSlide +=
-        `<li><a href="#${section.slideNumber}">` + `${section.text}</a>`;
+        `<li><a href="#slide-${section.slideNumber}">` + `${section.text}</a>`;
       if (section.subItems.length > 0) {
         agendaSlide += "\n<ul>\n";
         section.subItems.forEach((item) => {
           agendaSlide +=
-            `<li><a href="#${item.slideNumber}">` + `${item.text}</a></li>\n`;
+            `<li><a href="#slide-${item.slideNumber}">` +
+            `${item.text}</a></li>\n`;
         });
         agendaSlide += "</ul>\n";
       }
@@ -307,6 +310,73 @@ function splitAgendaEntriesIntoColumns(entries, columnCount) {
   return columns.filter((column) => column.length > 0);
 }
 
+/**
+ * Adds in-document anchors for slide numbers.
+ */
+function prepareAgendaPdfAnchors() {
+  const slideContents = $(".remark-slide-content")
+    .toArray()
+    .filter((slideNode) => !window.isEndSlideContent(slideNode));
+
+  if (slideContents.length === 0) {
+    return;
+  }
+
+  slideContents.forEach((slideNode) => {
+    $(slideNode).children("a.agenda-slide-anchor").remove();
+  });
+
+  const anchoredNumbers = new Set();
+
+  slideContents.forEach((slideNode) => {
+    const slideContent = $(slideNode);
+    const slideNumberText = (
+      slideContent.children(".remark-slide-number").first().text() || ""
+    ).trim();
+    const match = slideNumberText.match(/^(\d+)\s*\/\s*\d+$/);
+
+    if (!match) {
+      return;
+    }
+
+    const slideNumber = match[1];
+    if (anchoredNumbers.has(slideNumber)) {
+      return;
+    }
+    anchoredNumbers.add(slideNumber);
+
+    const anchor = $("<a></a>");
+    anchor.addClass("agenda-slide-anchor");
+    anchor.attr("aria-hidden", "true");
+    anchor.attr("id", `slide-${slideNumber}`);
+    anchor.attr("name", `slide-${slideNumber}`);
+    slideContent.prepend(anchor);
+  });
+}
+
+/**
+ * Keeps browser navigation compatible with remark while preserving
+ * PDF-friendly `#slide-N` anchors in generated agenda markup.
+ */
+function bindAgendaNavigationLinks() {
+  $(".agenda-column a[href^='#slide-'], .slide-body-content a[href^='#slide-']")
+    .off("click.agenda-navigation")
+    .on("click.agenda-navigation", function (event) {
+      const link = $(this);
+      const href = (link.attr("href") || "").trim();
+      const match = href.match(/^#slide-(\d+)$/);
+
+      if (!match) {
+        return;
+      }
+
+      event.preventDefault();
+      window.location.hash = `#${match[1]}`;
+    });
+}
+
 Object.assign(window, {
-  generateAgenda
+  generateAgenda,
+  prepareAgendaPdfAnchors,
+  bindAgendaNavigationLinks
 });

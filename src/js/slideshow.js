@@ -55,6 +55,8 @@ $.when(slidesRequest, templateRequest).done(function (slide, template) {
       window.wrapSlideBody();
       window.ensureSlideStructureOrder();
       window.prepareSlideTitles();
+      window.prepareAgendaPdfAnchors();
+      window.bindAgendaNavigationLinks();
       window.injectTitleSlideDate();
       window.normalizeMarkdownFootnotes();
       window.normalizeMarkdownImages();

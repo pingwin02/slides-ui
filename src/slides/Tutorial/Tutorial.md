@@ -802,7 +802,7 @@ Then you probably want to add own origin and push it to own git repository.
 Start server:
 
 ```bash
-npm run serve
+npm start
 ```
 
 Create course in `src/slides/<course_name>/<course_name>.md`.
@@ -816,7 +816,7 @@ Based on examples in `src/slides/Examples` and `src/css/slides/Examples` create 
 Generate PDF documents:
 
 ```bash
-bash generate_pdf.sh
+npm run print
 ```
 
 ---
