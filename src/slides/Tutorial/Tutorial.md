@@ -5,6 +5,7 @@
 Michał Wójcik
 
 <!-- agenda -->
+<!-- dynamic-text -->
 
 ---
 
@@ -124,6 +125,31 @@ Where:
 Author
 
 <!-- agenda -->
+```
+
+---
+
+### Dynamic text mode
+
+Dynamic text mode is disabled by default.
+
+When enabled, the engine applies dynamic typography and vertical centering for suitable slides.
+
+**Important:** The control tag must be placed on the title slide.
+
+Control option:
+
+- `<!-- dynamic-text -->`
+
+```md
+# Course name
+
+## Topic
+
+Author
+
+<!-- agenda -->
+<!-- dynamic-text -->
 ```
 
 ---
@@ -789,29 +815,163 @@ class: img-left
 
 ---
 
+### Styling - image layout (two)
+
+Use `class: img-2` to place two markdown images side by side.
+
+```md
+---
+
+class: img-2
+
+### Slide title
+
+![Left](assets/img/fox.svg)
+![Right](assets/img/fox.svg)
+```
+
+---
+
+class: img-2
+
+### Styling - image layout (two)
+
+![Left](assets/img/fox.svg)
+![Right](assets/img/fox.svg)
+
+---
+
+### Styling - image layout (three)
+
+Use `class: img-3` to place three markdown images side by side.
+
+```md
+---
+
+class: img-3
+
+### Slide title
+
+![Left](assets/img/fox.svg)
+![Center](assets/img/fox.svg)
+![Right](assets/img/fox.svg)
+```
+
+---
+
+class: img-3
+
+### Styling - image layout (three)
+
+![Left](assets/img/fox.svg)
+![Center](assets/img/fox.svg)
+![Right](assets/img/fox.svg)
+
+---
+
+### Styling - text layout (two columns)
+
+Use `class: col-2` to split slide text into two columns.
+
+```md
+---
+
+class: col-2
+
+### Slide title
+
+First paragraph.
+
+Second paragraph.
+
+Third paragraph.
+
+Fourth paragraph.
+```
+
+---
+
+class: col-2
+
+### Styling - text layout (two columns)
+
+First paragraph.
+
+Second paragraph.
+
+Third paragraph.
+
+Fourth paragraph.
+
+Fifth paragraph.
+
+Sixth paragraph.
+
+---
+
+### Styling - text layout (three columns)
+
+Use `class: col-3` to split slide text into three columns.
+
+```md
+---
+
+class: col-3
+
+### Slide title
+
+First paragraph.
+
+Second paragraph.
+
+Third paragraph.
+
+Fourth paragraph.
+
+Fifth paragraph.
+
+Sixth paragraph.
+```
+
+---
+
+class: col-3
+
+### Styling - text layout (three columns)
+
+First paragraph.
+
+Second paragraph.
+
+Third paragraph.
+
+Fourth paragraph.
+
+Fifth paragraph.
+
+Sixth paragraph.
+
+Seventh paragraph.
+
+Eighth paragraph.
+
+Ninth paragraph.
+
+---
+
 ### Instructions
 
 Firstly, clone this repository:
 
 ```bash
-git clone https://git.pg.edu.pl/p650304/slides-ui/
+git clone https://github.com/pingwin02/slides-ui
 ```
-
-Then you probably want to add own origin and push it to own git repository.
 
 Start server:
 
 ```bash
 npm start
 ```
-
-Create course in `src/slides/<course_name>/<course_name>.md`.
-
-Create topic in `src/slides/<course_name>/<topic_name>/<topic_name>.md`.
-
-Create CSS styles in `src/css/slides/<course_name>/<topic_name>/styles.css`, if needed.
-
-Based on examples in `src/slides/Examples` and `src/css/slides/Examples` create own content.
 
 Generate PDF documents:
 

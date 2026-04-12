@@ -44,6 +44,13 @@ $.when(slidesRequest, templateRequest).done(function (slide, template) {
 
   md = window.generateAgenda(md);
 
+  if (typeof window.setDynamicTextEnabledState === "function") {
+    const dynamicTextEnabled =
+      typeof window.hasDynamicTextTagInMarkdown === "function" &&
+      window.hasDynamicTextTagInMarkdown(md);
+    window.setDynamicTextEnabledState(dynamicTextEnabled);
+  }
+
   $("#source").text(md);
 
   slideshow = remark.create(
@@ -64,6 +71,11 @@ $.when(slidesRequest, templateRequest).done(function (slide, template) {
       window.groupAutoImagesIntoRows();
       window.restructureImageLayoutSlides();
       window.fitAutoImagesToContent();
+      if (
+        typeof window.applyDynamicSlideTypographyAndAlignment === "function"
+      ) {
+        window.applyDynamicSlideTypographyAndAlignment();
+      }
     }
   );
 
@@ -77,5 +89,17 @@ $.when(slidesRequest, templateRequest).done(function (slide, template) {
   window.renderMathFormulas();
   slideshow.on("afterShowSlide", window.renderMermaidDiagrams);
   slideshow.on("afterShowSlide", window.renderMathFormulas);
+  if (typeof window.syncAgendaNavigationLinksForVisibleSlide === "function") {
+    slideshow.on(
+      "afterShowSlide",
+      window.syncAgendaNavigationLinksForVisibleSlide
+    );
+  }
   slideshow.on("afterShowSlide", window.fitAutoImagesToContent);
+  if (typeof window.applyDynamicSlideTypographyAndAlignment === "function") {
+    slideshow.on(
+      "afterShowSlide",
+      window.applyDynamicSlideTypographyAndAlignment
+    );
+  }
 });

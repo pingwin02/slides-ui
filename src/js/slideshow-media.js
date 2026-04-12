@@ -242,38 +242,72 @@ function normalizeMarkdownImages() {
       .children("p")
       .each(function () {
         const paragraph = $(this);
-        const image = paragraph.children("img:only-child");
+        const images = paragraph.children("img");
 
-        if (image.length === 0) {
+        if (images.length === 0) {
           return;
         }
 
-        if ((paragraph.text() || "").trim().length > 0) {
+        if (!containsOnlyImages(paragraph)) {
           return;
         }
 
-        const figure = $("<figure class=\"auto-image\"></figure>");
-        const caption = (image.attr("alt") || "").trim();
+        const figures = images
+          .toArray()
+          .map((imageNode) => createAutoImageFigure($(imageNode)));
 
-        image.appendTo(figure);
-
-        if (caption.length > 0) {
-          const captionNode = $("<figcaption></figcaption>");
-          const lines = caption.split(/<br\s*\/?>|\r?\n/i);
-
-          lines.forEach((line, index) => {
-            if (index > 0) {
-              captionNode.append("<br>");
-            }
-            appendCaptionTextWithLinks(captionNode, line);
-          });
-
-          captionNode.appendTo(figure);
-        }
-
-        paragraph.replaceWith(figure);
+        paragraph.replaceWith(figures);
       });
   });
+}
+
+/**
+ * Returns true when paragraph contains only image
+ * nodes and optional whitespace text nodes.
+ */
+function containsOnlyImages(paragraph) {
+  const hasOtherContent = paragraph
+    .contents()
+    .toArray()
+    .some((node) => {
+      if (node.nodeType === 3) {
+        return (node.nodeValue || "").trim().length > 0;
+      }
+
+      if (node.nodeType === 1) {
+        return node.nodeName.toLowerCase() !== "img";
+      }
+
+      return true;
+    });
+
+  return !hasOtherContent;
+}
+
+/**
+ * Converts markdown image to standardized auto-image figure.
+ */
+function createAutoImageFigure(image) {
+  const figure = $("<figure class=\"auto-image\"></figure>");
+  const caption = (image.attr("alt") || "").trim();
+
+  image.appendTo(figure);
+
+  if (caption.length > 0) {
+    const captionNode = $("<figcaption></figcaption>");
+    const lines = caption.split(/<br\s*\/?>|\r?\n/i);
+
+    lines.forEach((line, index) => {
+      if (index > 0) {
+        captionNode.append("<br>");
+      }
+      appendCaptionTextWithLinks(captionNode, line);
+    });
+
+    captionNode.appendTo(figure);
+  }
+
+  return figure;
 }
 
 /**

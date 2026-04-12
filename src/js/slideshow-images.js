@@ -2,6 +2,52 @@ const AUTO_IMAGE_SELECTOR = "figure.auto-image";
 const AUTO_IMAGE_ROW_SELECTOR = ".auto-image-row";
 
 /**
+ * Returns true when global dynamic text mode is enabled.
+ */
+function isDynamicTextModeEnabled() {
+  return (
+    typeof window.isDynamicTextEnabled === "function" &&
+    window.isDynamicTextEnabled()
+  );
+}
+
+/**
+ * Allows vertical centering for image slides with no
+ * body text or a very small amount of simple intro text.
+ */
+function shouldCenterAutoImages(nonImageChildren) {
+  if (nonImageChildren.length === 0) {
+    return true;
+  }
+
+  if (nonImageChildren.length > 2) {
+    return false;
+  }
+
+  const hasOnlySimpleNodes = nonImageChildren.every((node) =>
+    node.matches("p, ul, ol")
+  );
+
+  if (!hasOnlySimpleNodes) {
+    return false;
+  }
+
+  const totalTextLength = nonImageChildren.reduce((sum, node) => {
+    return sum + (node.textContent || "").trim().length;
+  }, 0);
+
+  return totalTextLength <= 180;
+}
+
+/**
+ * Returns true for slides using dedicated
+ * three-image layout classes.
+ */
+function isThreeImageLayoutSlide(slideContent) {
+  return Boolean(slideContent) && slideContent.classList.contains("img-3");
+}
+
+/**
  * Groups consecutive auto image figures into horizontal rows.
  */
 function groupAutoImagesIntoRows() {
@@ -43,12 +89,16 @@ function groupAutoImagesIntoRows() {
  * area and shrink when additional text is present.
  */
 function fitAutoImagesToContent() {
+  const dynamicTextModeEnabled = isDynamicTextModeEnabled();
+
   $(".slide-body-content").each(function () {
     const bodyContent = this;
     const body = bodyContent.closest(".slide-body");
     if (!body) {
       return;
     }
+
+    bodyContent.classList.remove("auto-images-centered");
 
     const slideContent = body.closest(".remark-slide-content");
     if (
@@ -64,22 +114,26 @@ function fitAutoImagesToContent() {
       return;
     }
 
+    const childNodes = Array.from(bodyContent.children);
+    const nonImageChildren = childNodes.filter(
+      (node) =>
+        !node.matches(`${AUTO_IMAGE_SELECTOR}, ${AUTO_IMAGE_ROW_SELECTOR}`)
+    );
+
     const safeContentHeight = Math.max(
       120,
       bodyContent.clientHeight || body.clientHeight
     );
 
-    const nonFigureHeight = Array.from(bodyContent.children)
-      .filter(
-        (node) =>
-          !node.matches(`${AUTO_IMAGE_SELECTOR}, ${AUTO_IMAGE_ROW_SELECTOR}`)
-      )
-      .reduce((sum, node) => sum + getOuterHeightWithMargins(node), 0);
+    const nonFigureHeight = nonImageChildren.reduce(
+      (sum, node) => sum + getOuterHeightWithMargins(node),
+      0
+    );
 
-    const standaloneFigures = Array.from(bodyContent.children).filter((node) =>
+    const standaloneFigures = childNodes.filter((node) =>
       node.matches(AUTO_IMAGE_SELECTOR)
     );
-    const rows = Array.from(bodyContent.children).filter((node) =>
+    const rows = childNodes.filter((node) =>
       node.matches(AUTO_IMAGE_ROW_SELECTOR)
     );
     const imageContainers = [...standaloneFigures, ...rows];
@@ -97,17 +151,24 @@ function fitAutoImagesToContent() {
       Math.floor(availableForImages / containerCount)
     );
 
+    const isThreeImageLayout = isThreeImageLayoutSlide(slideContent);
+    const figureHeightCap = isThreeImageLayout
+      ? Math.min(perContainerHeight, 320)
+      : perContainerHeight;
+
     standaloneFigures.forEach((figure) => {
-      applyFigureImageMaxHeight(figure, perContainerHeight);
+      applyFigureImageMaxHeight(figure, figureHeightCap);
     });
 
     rows.forEach((row) =>
       row
         .querySelectorAll(AUTO_IMAGE_SELECTOR)
-        .forEach((figure) =>
-          applyFigureImageMaxHeight(figure, perContainerHeight)
-        )
+        .forEach((figure) => applyFigureImageMaxHeight(figure, figureHeightCap))
     );
+
+    if (dynamicTextModeEnabled && shouldCenterAutoImages(nonImageChildren)) {
+      bodyContent.classList.add("auto-images-centered");
+    }
   });
 }
 
@@ -236,6 +297,9 @@ function getVerticalMargins(element) {
 
 Object.assign(window, {
   groupAutoImagesIntoRows,
+  isDynamicTextModeEnabled,
+  shouldCenterAutoImages,
+  isThreeImageLayoutSlide,
   fitAutoImagesToContent,
   fitMermaidDiagramsToContent,
   restructureImageLayoutSlides,

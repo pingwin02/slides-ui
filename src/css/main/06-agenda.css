@@ -1,0 +1,41 @@
+.remark-slide-container:nth-of-type(n + 2)
+  .remark-slide-content[class*="agenda-columns-"]
+  .slide-body-content {
+  display: flex;
+  gap: 2em;
+  align-items: flex-start;
+  text-align: left;
+}
+
+[class*="agenda-columns-"] .agenda-column {
+  flex: 1;
+  min-width: 0;
+}
+
+[class*="agenda-columns-"] .agenda-column li {
+  break-inside: avoid;
+}
+
+[class*="agenda-columns-"] a {
+  color: inherit;
+  text-decoration: none;
+}
+
+[class*="agenda-columns-"] a:hover {
+  text-decoration: underline;
+}
+
+[class*="agenda-columns-"] .slide-body {
+  justify-content: flex-start;
+}
+
+[class*="agenda-columns-"] .slide-header {
+  pointer-events: none;
+}
+
+a.agenda-slide-anchor {
+  display: block;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}

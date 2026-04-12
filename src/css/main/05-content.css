@@ -1,0 +1,63 @@
+a,
+a:visited {
+  text-decoration: none;
+  color: rgb(0, 55, 103);
+}
+
+table tr:nth-child(even) {
+  background: #ededed;
+}
+
+table thead th {
+  background: #ededed;
+  vertical-align: center;
+}
+
+th,
+td {
+  padding: 0.25em 0.5em;
+}
+
+.remark-slide-container:nth-of-type(n + 2) .slide-body-content table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+  margin-top: 1em;
+  text-align: left;
+}
+
+.remark-slide-container:nth-of-type(n + 2) .slide-body-content :is(th, td) {
+  text-align: left;
+}
+
+.remark-slide-container:nth-of-type(n + 2)
+  .table-vertical-center-content
+  table {
+  margin-top: 0;
+}
+
+.remark-slide-container:nth-of-type(n + 2)
+  :is(.col-2, .col-3)
+  .slide-body-content {
+  height: auto;
+  max-height: 100%;
+  width: 100%;
+  column-gap: 1.8rem;
+  column-fill: balance;
+  text-align: left;
+}
+
+.remark-slide-container:nth-of-type(n + 2) .col-2 .slide-body-content {
+  column-count: 2;
+}
+
+.remark-slide-container:nth-of-type(n + 2) .col-3 .slide-body-content {
+  column-count: 3;
+}
+
+.remark-slide-container:nth-of-type(n + 2)
+  :is(.col-2, .col-3)
+  .slide-body-content
+  > * {
+  break-inside: avoid;
+}

@@ -78,6 +78,9 @@ function generate_pdf() {
                 decktape_args+=(--slides "${selected_slide_number}")
             fi
 
+            # Set pause
+            decktape_args+=(-p 100)
+
             npx decktape \
                 "${decktape_args[@]}" \
                 "${course_url}" \

@@ -6,6 +6,8 @@ echo "# Materials" > $index_file
 echo "" >> $index_file
 echo "## Courses menu on second slide" >> $index_file
 echo "" >> $index_file
+echo "<!-- dynamic-text -->" >> $index_file
+echo "" >> $index_file
 echo "---" >> $index_file
 echo "" >> $index_file
 echo "## Courses" >> $index_file

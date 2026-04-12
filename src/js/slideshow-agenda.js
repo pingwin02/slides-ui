@@ -359,24 +359,84 @@ function prepareAgendaPdfAnchors() {
  * PDF-friendly `#slide-N` anchors in generated agenda markup.
  */
 function bindAgendaNavigationLinks() {
-  $(".agenda-column a[href^='#slide-'], .slide-body-content a[href^='#slide-']")
+  const targetLinksSelector =
+    ".agenda-column a[data-slide-target], " +
+    ".slide-body-content a[data-slide-target]";
+
+  const selector =
+    ".agenda-column a[href^='#slide-'], " +
+    ".slide-body-content a[href^='#slide-'], " +
+    targetLinksSelector;
+
+  $(selector).each(function () {
+    const link = $(this);
+    const href = (link.attr("href") || "").trim();
+    const currentTarget = (link.attr("data-slide-target") || "").trim();
+
+    let slideNumber = "";
+    const hrefMatch = href.match(/^#slide-(\d+)$/);
+    if (hrefMatch) {
+      slideNumber = hrefMatch[1];
+    } else if (/^\d+$/.test(currentTarget)) {
+      slideNumber = currentTarget;
+    }
+
+    if (!slideNumber) {
+      return;
+    }
+
+    link.attr("data-slide-target", slideNumber);
+    link.removeAttr("href");
+  });
+
+  syncAgendaNavigationLinksForVisibleSlide();
+
+  $(targetLinksSelector)
     .off("click.agenda-navigation")
     .on("click.agenda-navigation", function (event) {
-      const link = $(this);
-      const href = (link.attr("href") || "").trim();
-      const match = href.match(/^#slide-(\d+)$/);
+      const slideNumber = ($(this).attr("data-slide-target") || "").trim();
 
-      if (!match) {
+      if (!/^\d+$/.test(slideNumber)) {
         return;
       }
 
       event.preventDefault();
-      window.location.hash = `#${match[1]}`;
+      window.location.hash = `#${slideNumber}`;
     });
+}
+
+/**
+ * Enables PDF anchor href only on currently visible slide links
+ * to avoid duplicated annotations from hidden previous/next slides.
+ */
+function syncAgendaNavigationLinksForVisibleSlide() {
+  const targetLinksSelector =
+    ".agenda-column a[data-slide-target], " +
+    ".slide-body-content a[data-slide-target]";
+  const allLinks = $(targetLinksSelector);
+
+  if (allLinks.length === 0) {
+    return;
+  }
+
+  allLinks.removeAttr("href");
+
+  $(
+    ".remark-visible .agenda-column a[data-slide-target], " +
+      ".remark-visible .slide-body-content a[data-slide-target]"
+  ).each(function () {
+    const slideNumber = ($(this).attr("data-slide-target") || "").trim();
+    if (!/^\d+$/.test(slideNumber)) {
+      return;
+    }
+
+    $(this).attr("href", `#slide-${slideNumber}`);
+  });
 }
 
 Object.assign(window, {
   generateAgenda,
   prepareAgendaPdfAnchors,
-  bindAgendaNavigationLinks
+  bindAgendaNavigationLinks,
+  syncAgendaNavigationLinksForVisibleSlide
 });
