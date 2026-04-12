@@ -54,13 +54,11 @@ npm start -- [port_number]
 
 To stop server, use `CTRL` + `C`.
 
-## Title Slide Control Tags
+## Tutorial
 
-Optional title-slide HTML comments can enable automatic presentation features:
+A full tutorial is available in [Tutorial](src/slides/Tutorial/Tutorial.md).
 
-- `<!-- agenda -->` enables automatic agenda with sections and slide titles,
-- `<!-- agenda-sections -->` enables automatic agenda with sections only,
-- `<!-- dynamic-text -->` enables dynamic typography, compact text/list spacing, and vertical centering for suitable text/table/image/mermaid slides.
+Recommended way to view the tutorial is to start the server and open the tutorial file in the browser.
 
 ## PDF printing
 
