@@ -189,6 +189,41 @@ figcaption {
 
 .remark-slide-container:nth-of-type(n + 2)
   :is(.col-2, .col-3)
+  .slide-body-content
+  > .mermaid {
+  overflow: visible;
+  break-inside: avoid;
+}
+
+.remark-slide-container:nth-of-type(n + 2)
+  .col-2
+  .slide-body-content:has(> .mermaid) {
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 0.4em;
+  column-count: unset;
+  align-items: center;
+  overflow: visible;
+}
+
+.remark-slide-container:nth-of-type(n + 2)
+  .col-2
+  .slide-body-content:has(> .mermaid)
+  > .mermaid {
+  flex: 1 1 45%;
+  min-width: 0;
+}
+
+.remark-slide-container:nth-of-type(n + 2)
+  .col-2
+  .slide-body-content:has(> .mermaid)
+  > .mermaid
+  svg {
+  max-width: 100% !important;
+}
+
+.remark-slide-container:nth-of-type(n + 2)
+  :is(.col-2, .col-3)
   .slide-body-content:has(> ul .mermaid) {
   display: flex;
   flex-direction: column;

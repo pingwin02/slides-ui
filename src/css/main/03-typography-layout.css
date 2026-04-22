@@ -9,6 +9,30 @@
   justify-content: center;
 }
 
+.remark-slide-container:nth-of-type(n + 2)
+  .slide-body-content.mermaid-centered-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+}
+
+.remark-slide-container:nth-of-type(n + 2)
+  .slide-body-content.mermaid-centered-content
+  .mermaid {
+  flex-shrink: 0;
+  width: 100%;
+}
+
+.remark-slide-container:nth-of-type(n + 2)
+  .slide-body-content.mermaid-centered-content
+  .mermaid
+  svg {
+  height: var(--mermaid-max-height, auto);
+  width: auto;
+  max-width: 100%;
+}
+
 .img-right .slide-body-content > .slide-text.dynamic-center-text-column,
 .img-left .slide-body-content > .slide-text.dynamic-center-text-column {
   display: flex;

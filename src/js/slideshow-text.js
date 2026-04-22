@@ -95,7 +95,8 @@ function resetDynamicTypographyState(container) {
     "dynamic-center-content",
     "dynamic-center-text-column",
     "table-vertical-center-content",
-    "dynamic-text-line-height"
+    "dynamic-text-line-height",
+    "mermaid-centered-content"
   );
   container.style.removeProperty("font-size");
   container.style.removeProperty("line-height");
@@ -223,7 +224,15 @@ function applyDynamicTypographyToContainer(
     container.classList.add("table-vertical-center-content");
   }
 
+  const hasMermaidContent = container.querySelector(".mermaid");
+  const hasCodeBlocks = Array.from(container.querySelectorAll("pre")).some(
+    (pre) => !pre.querySelector(".mermaid")
+  );
+
   if (hasComplexContent) {
+    if (hasMermaidContent && !hasTableContent && !hasCodeBlocks) {
+      container.classList.add("mermaid-centered-content");
+    }
     return;
   }
 

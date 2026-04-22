@@ -187,7 +187,15 @@ function fitMermaidDiagramsToContent() {
       return;
     }
 
-    const safeContentHeight = Math.max(120, bodyContent.clientHeight);
+    const slideContent = bodyContent.closest(".remark-slide-content");
+    const isColumnLayout =
+      slideContent &&
+      (slideContent.classList.contains("col-2") ||
+        slideContent.classList.contains("col-3"));
+
+    const referenceHeight = isColumnLayout
+      ? Math.max(120, bodyContent.parentElement.clientHeight)
+      : Math.max(120, bodyContent.clientHeight);
 
     const nonDiagramHeight = Array.from(bodyContent.children)
       .filter((node) => !node.matches(".mermaid"))
@@ -195,7 +203,7 @@ function fitMermaidDiagramsToContent() {
 
     const availableForDiagrams = Math.max(
       100,
-      safeContentHeight - nonDiagramHeight - 12
+      referenceHeight - nonDiagramHeight - 12
     );
     const perDiagramHeight = Math.max(
       100,
@@ -207,6 +215,29 @@ function fitMermaidDiagramsToContent() {
         "--mermaid-max-height",
         `${perDiagramHeight}px`
       );
+
+      const svg = diagram.querySelector("svg");
+      if (svg) {
+        const bbox = svg.getBBox();
+        const vb = svg.viewBox.baseVal;
+        if (vb && vb.width > 0) {
+          const needsExpand =
+            bbox.x < vb.x ||
+            bbox.y < vb.y ||
+            bbox.x + bbox.width > vb.x + vb.width ||
+            bbox.y + bbox.height > vb.y + vb.height;
+          if (needsExpand) {
+            const pad = 4;
+            const newX = Math.min(bbox.x, vb.x) - pad;
+            const newY = Math.min(bbox.y, vb.y) - pad;
+            const newW =
+              Math.max(bbox.x + bbox.width, vb.x + vb.width) - newX + pad;
+            const newH =
+              Math.max(bbox.y + bbox.height, vb.y + vb.height) - newY + pad;
+            svg.setAttribute("viewBox", `${newX} ${newY} ${newW} ${newH}`);
+          }
+        }
+      }
     });
   });
 }
