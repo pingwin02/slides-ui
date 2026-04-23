@@ -93,6 +93,8 @@ function generate_pdf() {
             fi
 
             node utils/fix_pdf_agenda_links.js "${course_file}"
+
+            echo "PDF generated: ${course_file}"
             if [ $? -ne 0 ]; then
                 echo "Error during PDF agenda links conversion. Exiting script."
                 exit 1
