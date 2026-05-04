@@ -27,14 +27,14 @@
     "prelint": "prettier . --write"
   },
   "dependencies": {
-    "decktape": "^3.16.0",
+    "decktape": "^3.16.1",
     "open": "^11.0.0",
     "ws": "^8.20.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "eslint": "^10.2.0",
-    "globals": "^17.5.0",
-    "prettier": "^3.8.2"
+    "eslint": "^10.3.0",
+    "globals": "^17.6.0",
+    "prettier": "^3.8.3"
   }
 }
