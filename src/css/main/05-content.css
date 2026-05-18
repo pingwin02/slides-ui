@@ -47,6 +47,24 @@ td {
   text-align: left;
 }
 
+.remark-slide-container:nth-of-type(n + 2)
+  :is(.col-2, .col-3)
+  .slide-body-content
+  > ul {
+  break-inside: auto;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.remark-slide-container:nth-of-type(n + 2)
+  :is(.col-2, .col-3)
+  .slide-body-content
+  > ul
+  > li {
+  break-inside: avoid;
+}
+
 .remark-slide-container:nth-of-type(n + 2) .col-2 .slide-body-content {
   column-count: 2;
 }
@@ -58,6 +76,6 @@ td {
 .remark-slide-container:nth-of-type(n + 2)
   :is(.col-2, .col-3)
   .slide-body-content
-  > * {
+  > :not(ul) {
   break-inside: avoid;
 }

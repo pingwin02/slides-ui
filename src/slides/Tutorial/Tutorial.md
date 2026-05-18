@@ -880,13 +880,21 @@ class: col-2
 
 ### Slide title
 
-First paragraph.
+- **First column**
 
-Second paragraph.
+  First paragraph.
 
-Third paragraph.
+  Second paragraph.
 
-Fourth paragraph.
+  Third paragraph.
+
+  Fourth paragraph.
+
+- **Second column**
+
+  Fifth paragraph.
+
+  Sixth paragraph.
 ```
 
 ---
@@ -895,17 +903,21 @@ class: col-2
 
 ### Styling - text layout (two columns)
 
-First paragraph.
+- **First column**
 
-Second paragraph.
+  First paragraph.
 
-Third paragraph.
+  Second paragraph.
 
-Fourth paragraph.
+  Third paragraph.
 
-Fifth paragraph.
+  Fourth paragraph.
 
-Sixth paragraph.
+- **Second column**
+
+  Fifth paragraph.
+
+  Sixth paragraph.
 
 ---
 
@@ -920,17 +932,23 @@ class: col-3
 
 ### Slide title
 
-First paragraph.
+- **First column**
 
-Second paragraph.
+  First paragraph.
 
-Third paragraph.
+  Second paragraph.
 
-Fourth paragraph.
+- **Second column**
 
-Fifth paragraph.
+  Third paragraph.
 
-Sixth paragraph.
+  Fourth paragraph.
+
+- **Third column**
+
+  Fifth paragraph.
+
+  Sixth paragraph.
 ```
 
 ---
@@ -939,23 +957,29 @@ class: col-3
 
 ### Styling - text layout (three columns)
 
-First paragraph.
+- **First column**
 
-Second paragraph.
+  First paragraph.
 
-Third paragraph.
+  Second paragraph.
 
-Fourth paragraph.
+  Third paragraph.
 
-Fifth paragraph.
+  Fourth paragraph.
 
-Sixth paragraph.
+- **Second column**
 
-Seventh paragraph.
+  Fifth paragraph.
 
-Eighth paragraph.
+  Sixth paragraph.
 
-Ninth paragraph.
+- **Third column**
+
+  Seventh paragraph.
+
+  Eighth paragraph.
+
+  Ninth paragraph.
 
 ---
 
