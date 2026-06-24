@@ -1,6 +1,63 @@
 let slideshow;
 
 const slides = window.location.pathname;
+const END_SLIDE_DISABLED_TAG = "<!-- no-end-slide -->";
+const END_SLIDE_MARKDOWN =
+  "\n\n---\nlayout: false\nclass: end-slide\n\n" +
+  "<div class=\"end-slide-logo-wrapper\">\n" +
+  "<img class=\"end-slide-logo\" " +
+  "alt=\"PG Logo\" src=\"/img/pg_logo_white.svg\"/>\n" +
+  "</div>\n";
+
+function splitMarkdownSlides(markdown) {
+  const normalizedMarkdown = (markdown || "").replace(/\r\n/g, "\n");
+  const lines = normalizedMarkdown.split("\n");
+  const markdownSlides = [];
+  const currentSlideLines = [];
+  let fenceMarker = "";
+  let fenceLength = 0;
+
+  lines.forEach((line) => {
+    const fenceMatch = line.match(/^\s*([`~]{3,})/);
+    if (fenceMatch) {
+      const marker = fenceMatch[1][0];
+      const markerLength = fenceMatch[1].length;
+
+      if (!fenceMarker) {
+        fenceMarker = marker;
+        fenceLength = markerLength;
+      } else if (marker === fenceMarker && markerLength >= fenceLength) {
+        fenceMarker = "";
+        fenceLength = 0;
+      }
+
+      currentSlideLines.push(line);
+      return;
+    }
+
+    if (!fenceMarker && /^\s*---\s*$/.test(line)) {
+      markdownSlides.push(currentSlideLines.join("\n"));
+      currentSlideLines.length = 0;
+      return;
+    }
+
+    currentSlideLines.push(line);
+  });
+
+  markdownSlides.push(currentSlideLines.join("\n"));
+
+  return markdownSlides;
+}
+
+function hasEndSlideDisabledTagInMarkdown(markdown) {
+  const markdownSlides = splitMarkdownSlides(markdown);
+
+  if (markdownSlides.length === 0) {
+    return false;
+  }
+
+  return markdownSlides[0].includes(END_SLIDE_DISABLED_TAG);
+}
 
 if (slides === "/") {
   window.location.replace("/slides/Materials.md");
@@ -31,15 +88,14 @@ const templateRequest = $.ajax({
 });
 
 $.when(slidesRequest, templateRequest).done(function (slide, template) {
-  let md =
-    template[0] +
-    slide[0] +
-    "\n\n---\nlayout: false\nclass: end-slide\n\n" +
-    "<div class=\"end-slide-logo-wrapper\">\n" +
-    "<img class=\"end-slide-logo\" " +
-    "alt=\"PG Logo\" " +
-    "src=\"/img/pg_logo_white.svg\"/>\n" +
-    "</div>\n";
+  const slideMarkdown = slide[0].replace(/\r\n/g, "\n");
+  const shouldAppendEndSlide = !hasEndSlideDisabledTagInMarkdown(slideMarkdown);
+  let md = template[0] + slideMarkdown;
+
+  if (shouldAppendEndSlide) {
+    md += END_SLIDE_MARKDOWN;
+  }
+
   md = md.replace(/\r\n/g, "\n");
 
   md = window.generateAgenda(md);

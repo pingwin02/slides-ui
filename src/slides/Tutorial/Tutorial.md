@@ -154,6 +154,32 @@ Author
 
 ---
 
+### Closing logo slide
+
+The closing logo slide is enabled by default.
+
+When disabled, it is not added to the deck and slide numbering adjusts automatically.
+
+**Important:** The control tag must be placed on the title slide.
+
+Control option:
+
+- `<!-- no-end-slide -->`
+
+```md
+# Course name
+
+## Topic
+
+Author
+
+<!-- agenda -->
+<!-- dynamic-text -->
+<!-- no-end-slide -->
+```
+
+---
+
 ### Subsequent slides
 
 Subsequent slides can have any content.
