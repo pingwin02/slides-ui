@@ -115,5 +115,5 @@
 .remark-slide-container:nth-of-type(n + 2) .slide-body-content {
   height: 100%;
   box-sizing: border-box;
-  text-align: justify;
+  text-align: left;
 }

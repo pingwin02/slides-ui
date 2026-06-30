@@ -142,48 +142,90 @@ figcaption {
 }
 
 /* Image layout: two markdown images side by side */
-.img-2 .slide-body-content .auto-image-row {
+.remark-slide-container:nth-of-type(n + 2)
+  .img-2
+  .slide-body-content
+  .auto-image-row {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
   align-items: center;
 }
 
-.img-2 .slide-body-content .auto-image-row figure.auto-image {
+.remark-slide-container:nth-of-type(n + 2)
+  .img-2
+  .slide-body-content
+  .auto-image-row
+  figure.auto-image {
   margin: 0;
 }
 
-.img-2 .slide-body-content .auto-image-row figure.auto-image img {
+.remark-slide-container:nth-of-type(n + 2)
+  .img-2
+  .slide-body-content
+  .auto-image-row
+  figure.auto-image
+  img {
   width: 100%;
   max-width: 100%;
   max-height: 260px;
   object-fit: contain;
 }
 
-.img-2 .slide-body-content .auto-image-row figure.auto-image figcaption {
+.remark-slide-container:nth-of-type(n + 2)
+  .img-2
+  .slide-body-content
+  .auto-image-row
+  figure.auto-image
+  figcaption {
   margin-top: 0.25em;
 }
 
+.dynamic-text-enabled
+  .remark-slide-container:nth-of-type(n + 2)
+  .remark-slide-content:is(.img-2, .img-3)
+  .slide-body-content
+  .auto-image-row {
+  margin-top: 0.35em;
+}
+
 /* Image layout: three markdown images side by side */
-.img-3 .slide-body-content .auto-image-row {
+.remark-slide-container:nth-of-type(n + 2)
+  .img-3
+  .slide-body-content
+  .auto-image-row {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1rem;
   align-items: center;
 }
 
-.img-3 .slide-body-content .auto-image-row figure.auto-image {
+.remark-slide-container:nth-of-type(n + 2)
+  .img-3
+  .slide-body-content
+  .auto-image-row
+  figure.auto-image {
   margin: 0;
 }
 
-.img-3 .slide-body-content .auto-image-row figure.auto-image img {
+.remark-slide-container:nth-of-type(n + 2)
+  .img-3
+  .slide-body-content
+  .auto-image-row
+  figure.auto-image
+  img {
   width: 100%;
   max-width: 100%;
   max-height: 320px;
   object-fit: contain;
 }
 
-.img-3 .slide-body-content .auto-image-row figure.auto-image figcaption {
+.remark-slide-container:nth-of-type(n + 2)
+  .img-3
+  .slide-body-content
+  .auto-image-row
+  figure.auto-image
+  figcaption {
   margin-top: 0.25em;
 }
 

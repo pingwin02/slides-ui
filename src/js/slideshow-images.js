@@ -48,6 +48,18 @@ function isThreeImageLayoutSlide(slideContent) {
 }
 
 /**
+ * Returns true for slides that explicitly define
+ * a multi-image grid layout.
+ */
+function isGridImageLayoutSlide(slideContent) {
+  return (
+    Boolean(slideContent) &&
+    (slideContent.classList.contains("img-2") ||
+      slideContent.classList.contains("img-3"))
+  );
+}
+
+/**
  * Groups consecutive auto image figures into horizontal rows.
  */
 function groupAutoImagesIntoRows() {
@@ -109,6 +121,8 @@ function fitAutoImagesToContent() {
       return;
     }
 
+    const hasExplicitGridImageLayout = isGridImageLayoutSlide(slideContent);
+
     const figures = bodyContent.querySelectorAll(AUTO_IMAGE_SELECTOR);
     if (figures.length === 0) {
       return;
@@ -166,7 +180,11 @@ function fitAutoImagesToContent() {
         .forEach((figure) => applyFigureImageMaxHeight(figure, figureHeightCap))
     );
 
-    if (dynamicTextModeEnabled && shouldCenterAutoImages(nonImageChildren)) {
+    if (
+      dynamicTextModeEnabled &&
+      !hasExplicitGridImageLayout &&
+      shouldCenterAutoImages(nonImageChildren)
+    ) {
       bodyContent.classList.add("auto-images-centered");
     }
   });
@@ -217,7 +235,14 @@ function fitMermaidDiagramsToContent() {
       );
 
       const svg = diagram.querySelector("svg");
-      if (svg) {
+      const source = (
+        diagram.getAttribute("data-mermaid-source") ||
+        diagram.textContent ||
+        ""
+      ).trim();
+      const isPieChart = /^pie\b/im.test(source);
+
+      if (svg && isPieChart) {
         const bbox = svg.getBBox();
         const vb = svg.viewBox.baseVal;
         if (vb && vb.width > 0) {

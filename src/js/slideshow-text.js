@@ -140,6 +140,18 @@ function getTextColumnCount(slideContent) {
 }
 
 /**
+ * Returns true for slides that explicitly request
+ * grid-like markdown image layouts.
+ */
+function isImageGridLayoutSlide(slideContent) {
+  return (
+    Boolean(slideContent) &&
+    (slideContent.classList.contains("img-2") ||
+      slideContent.classList.contains("img-3"))
+  );
+}
+
+/**
  * Applies dynamic font scaling and vertical centering
  * for multi-column text slides.
  */
@@ -296,6 +308,7 @@ function applyDynamicSlideTypographyAndAlignment() {
       ".slide-body-content > .slide-text"
     );
     const textColumnCount = getTextColumnCount(slideContent);
+    const isImageGridLayout = isImageGridLayoutSlide(slideContent);
 
     if (slideBody) {
       slideBody.classList.remove("slide-body-top-aligned");
@@ -308,7 +321,7 @@ function applyDynamicSlideTypographyAndAlignment() {
       !dynamicModeEnabled &&
       slideBody &&
       bodyContent &&
-      textColumnCount > 0 &&
+      (textColumnCount > 0 || isImageGridLayout) &&
       !slideContent.classList.contains("section-slide") &&
       !isAgendaSlide(slideContent)
     ) {
@@ -321,6 +334,13 @@ function applyDynamicSlideTypographyAndAlignment() {
       slideContent.classList.contains("section-slide") ||
       isAgendaSlide(slideContent)
     ) {
+      return;
+    }
+
+    if (isImageGridLayout) {
+      if (slideBody) {
+        slideBody.classList.add("slide-body-top-aligned");
+      }
       return;
     }
 
