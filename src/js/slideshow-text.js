@@ -265,17 +265,25 @@ function applyDynamicTypographyToContainer(
   const textContent = (container.textContent || "").trim();
   const charCount = textContent.length;
   const blockCount =
-    container.querySelectorAll("p, ul, ol, blockquote, pre").length || 1;
+    container.querySelectorAll("p, li, blockquote, pre").length || 1;
+
+  const isHalfColumn =
+    centerClassName === "dynamic-center-text-column" ||
+    slideContent.classList.contains("img-right") ||
+    slideContent.classList.contains("img-left");
+
+  const effectiveCharCount = isHalfColumn ? charCount * 1.8 : charCount;
+  const effectiveBlockCount = isHalfColumn ? blockCount * 1.5 : blockCount;
 
   let targetSize = maxSize;
 
-  if (charCount > 900 || blockCount > 9) {
+  if (effectiveCharCount > 900 || effectiveBlockCount > 9) {
     targetSize = minSize;
-  } else if (charCount > 700 || blockCount > 7) {
+  } else if (effectiveCharCount > 700 || effectiveBlockCount > 7) {
     targetSize = minSize + (maxSize - minSize) * 0.25;
-  } else if (charCount > 500 || blockCount > 6) {
+  } else if (effectiveCharCount > 500 || effectiveBlockCount > 6) {
     targetSize = minSize + (maxSize - minSize) * 0.45;
-  } else if (charCount > 320 || blockCount > 4) {
+  } else if (effectiveCharCount > 320 || effectiveBlockCount > 4) {
     targetSize = minSize + (maxSize - minSize) * 0.7;
   }
 

@@ -141,6 +141,13 @@ $.when(slidesRequest, templateRequest).done(function (slide, template) {
     theme: "neutral"
   });
 
+  function refreshCurrentSlideLayout() {
+    window.fitAutoImagesToContent();
+    if (typeof window.applyDynamicSlideTypographyAndAlignment === "function") {
+      window.applyDynamicSlideTypographyAndAlignment();
+    }
+  }
+
   window.renderMermaidDiagrams();
   window.renderMathFormulas();
   slideshow.on("afterShowSlide", window.renderMermaidDiagrams);
@@ -151,11 +158,25 @@ $.when(slidesRequest, templateRequest).done(function (slide, template) {
       window.syncAgendaNavigationLinksForVisibleSlide
     );
   }
-  slideshow.on("afterShowSlide", window.fitAutoImagesToContent);
-  if (typeof window.applyDynamicSlideTypographyAndAlignment === "function") {
-    slideshow.on(
-      "afterShowSlide",
-      window.applyDynamicSlideTypographyAndAlignment
-    );
+  slideshow.on("afterShowSlide", refreshCurrentSlideLayout);
+
+  requestAnimationFrame(() => {
+    refreshCurrentSlideLayout();
+    setTimeout(refreshCurrentSlideLayout, 50);
+    setTimeout(refreshCurrentSlideLayout, 200);
+  });
+
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => {
+      requestAnimationFrame(refreshCurrentSlideLayout);
+    });
   }
+
+  window.addEventListener("load", () => {
+    requestAnimationFrame(refreshCurrentSlideLayout);
+  });
+
+  $(".slide-img img").on("load", () => {
+    requestAnimationFrame(refreshCurrentSlideLayout);
+  });
 });

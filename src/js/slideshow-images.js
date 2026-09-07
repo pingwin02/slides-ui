@@ -136,7 +136,7 @@ function fitAutoImagesToContent() {
 
     const safeContentHeight = Math.max(
       120,
-      bodyContent.clientHeight || body.clientHeight
+      body.clientHeight || bodyContent.clientHeight
     );
 
     const nonFigureHeight = nonImageChildren.reduce(
@@ -156,19 +156,32 @@ function fitAutoImagesToContent() {
       return;
     }
 
+    const footnotes = body.querySelector(".slide-footnotes");
+    let footnotesHeight = 0;
+    if (footnotes) {
+      const footnotesStyles = window.getComputedStyle(footnotes);
+      const bottomOffset = parseFloat(footnotesStyles.bottom) || 0;
+      footnotesHeight =
+        getOuterHeightWithMargins(footnotes) + bottomOffset + 12;
+    }
+
     const availableForImages = Math.max(
-      100,
-      safeContentHeight - nonFigureHeight - 12
+      80,
+      safeContentHeight - nonFigureHeight - footnotesHeight - 12
     );
     const perContainerHeight = Math.max(
-      100,
+      80,
       Math.floor(availableForImages / containerCount)
     );
 
     const isThreeImageLayout = isThreeImageLayoutSlide(slideContent);
-    const figureHeightCap = isThreeImageLayout
-      ? Math.min(perContainerHeight, 320)
-      : perContainerHeight;
+    const hasExplicitGrid = isGridImageLayoutSlide(slideContent);
+    let figureHeightCap = perContainerHeight;
+    if (isThreeImageLayout) {
+      figureHeightCap = Math.min(perContainerHeight, 320);
+    } else if (hasExplicitGrid) {
+      figureHeightCap = Math.min(perContainerHeight, 185);
+    }
 
     standaloneFigures.forEach((figure) => {
       applyFigureImageMaxHeight(figure, figureHeightCap);

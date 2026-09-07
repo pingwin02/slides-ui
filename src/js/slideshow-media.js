@@ -83,10 +83,13 @@ function renderMermaidDiagrams() {
  * and a notes block.
  */
 function normalizeMarkdownFootnotes() {
-  $(".slide-body").each(function () {
-    const slideBody = this;
-    const bodyContent = slideBody.querySelector(".slide-body-content");
-    if (!bodyContent) {
+  $(".remark-slide-content").each(function () {
+    const slideContent = this;
+    const slideBody = slideContent.querySelector(".slide-body");
+    const bodyContent = slideBody
+      ? slideBody.querySelector(".slide-body-content")
+      : null;
+    if (!slideBody || !bodyContent) {
       return;
     }
 
@@ -100,7 +103,7 @@ function normalizeMarkdownFootnotes() {
       return;
     }
 
-    const usedFootnotes = replaceFootnoteReferences(bodyContent, definitions);
+    const usedFootnotes = replaceFootnoteReferences(slideContent, definitions);
     if (usedFootnotes.length === 0) {
       return;
     }
@@ -127,20 +130,35 @@ function collectFootnoteDefinitions(container) {
   const definitions = new Map();
 
   container.querySelectorAll("p, li").forEach((node) => {
-    const text = (node.textContent || "").trim();
-    const match = text.match(/^\[\^([^\]]+)\]:\s*(.+)$/);
-    if (!match) {
-      return;
+    const text = (node.innerText || node.textContent || "").trim();
+    const lines = text.split(/\r?\n/);
+    const foundInNode = [];
+    let isDefinitionParagraph = true;
+
+    for (const line of lines) {
+      const trimmedLine = line.trim();
+      if (!trimmedLine) {
+        continue;
+      }
+      const match = trimmedLine.match(/^\[\^([^\]]+)\]:\s*(.+)$/);
+      if (match) {
+        const id = match[1].trim();
+        const content = match[2].trim();
+        if (id.length > 0 && content.length > 0) {
+          foundInNode.push([id, content]);
+        }
+      } else {
+        isDefinitionParagraph = false;
+        break;
+      }
     }
 
-    const id = match[1].trim();
-    const content = match[2].trim();
-    if (id.length === 0 || content.length === 0) {
-      return;
+    if (foundInNode.length > 0 && isDefinitionParagraph) {
+      foundInNode.forEach(([id, content]) => {
+        definitions.set(id, content);
+      });
+      node.remove();
     }
-
-    definitions.set(id, content);
-    node.remove();
   });
 
   return definitions;
